@@ -96,9 +96,7 @@
   ;Use this function call to truly mount the db.. For whatever reason,
   ;the database gets stuck on pending state on initial mount
   (mount.core/start)
-
-  (execute-one! pool {:select [:email]
+  (execute-one! pool {:select [:id]
                       :from [:accounts]
-                      :where [:= :id
-                              #uuid "10052458-db6b-49aa-ac33-04758cf6f4fc"]})
+                      :where [:= :email "test@gmail.com"]})
   )

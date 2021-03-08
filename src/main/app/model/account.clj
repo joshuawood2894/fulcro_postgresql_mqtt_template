@@ -1,38 +1,41 @@
 (ns app.model.account
   (:require
-    ;[app.model.mock-database :as db]
     [app.model.database :as db]
-    [datascript.core :as d]
-    [com.fulcrologic.guardrails.core :refer [>defn => | ?]]
     [com.wsscode.pathom.connect :as pc :refer [defresolver defmutation]]
-    [taoensso.timbre :as log]
-    [clojure.spec.alpha :as s]))
+    [taoensso.timbre :as log]))
 
-(>defn all-account-ids
-  "Returns a sequence of UUIDs for all of the active accounts in the system"
-  [db]
-  [any? => (s/coll-of uuid? :kind vector?)]
-  (d/q '[:find [?v ...]
-         :where
-         [?e :account/active? true]
-         [?e :account/id ?v]]
-    db))
+;; Fulcro Inspect Test -- [:all-accounts]
+(defresolver all-user-ids-resolver [{:keys [db/pool] :as env} _]
+             {::pc/output [{:all-accounts [:account/id]}]}
+             {:all-accounts
+                (db/execute! db/pool {:select [:id]
+                                      :from [:accounts]})})
 
-(defresolver all-users-resolver [{:keys [db]} input]
-  {;;GIVEN nothing (e.g. this is usable as a root query)
-   ;; I can output all accounts. NOTE: only ID is needed...other resolvers resolve the rest
-   ::pc/output [{:all-accounts [:account/id]}]}
-  {:all-accounts (mapv
-                   (fn [id] {:account/id id})
-                   (all-account-ids db))})
+;; Fulcro Inspect Test -- [{[:account/email <email>][:account/id]}]
+(defresolver user-id-by-email-resolver [{:keys [db/pool] :as env} {:keys [account/email] :as input}]
+             {::pc/input  #{:account/email}
+              ::pc/output [:account/id]}
+             {:account/id (db/execute-one! db/pool {:select [:id]
+                                                    :from   [:accounts]
+                                                    :where  [:= :email (:account/email input)]})})
 
-(>defn get-account [db id subquery]
-  [any? uuid? vector? => (? map?)]
-  (d/pull db subquery [:account/id id]))
+;; Fulcro Inspect Test -- [{[:account/id <id>][:account/email]}]
+(defresolver user-email-by-id-resolver [{:keys [db/pool] :as env} {:keys [account/id] :as input}]
+             {::pc/input  #{:account/id}
+              ::pc/output [:account/email]}
+             {:account/email (db/execute-one! db/pool {:select [:email]
+                                                       :from   [:accounts]
+                                                       :where  [:= :id (:account/id input)]})})
 
-(defresolver account-resolver [{:keys [db] :as env} {:account/keys [id]}]
-  {::pc/input  #{:account/id}
-   ::pc/output [:account/email :account/active?]}
-  (get-account db id [:account/email :account/active?]))
+;; Fulcro Inspect Test -- [{[:account/id <id>][:account/active?]}]
+(defresolver user-account-status-by-id-resolver [{:keys [db/pool] :as env} {:keys [account/id] :as input}]
+             {::pc/input  #{:account/id}
+              ::pc/output [:account/active?]}
+             {:account/active? (db/execute-one! db/pool {:select [:active]
+                                                         :from   [:accounts]
+                                                         :where  [:= :id (:account/id input)]})})
 
-(def resolvers [all-users-resolver account-resolver])
+(def resolvers [all-user-ids-resolver
+                user-id-by-email-resolver
+                user-email-by-id-resolver
+                user-account-status-by-id-resolver])

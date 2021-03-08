@@ -1,6 +1,5 @@
 (ns app.model.session
   (:require
-    [app.model.mock-database :as db]
     [datascript.core :as d]
     [com.fulcrologic.guardrails.core :refer [>defn => | ?]]
     [com.wsscode.pathom.connect :as pc :refer [defresolver defmutation]]
