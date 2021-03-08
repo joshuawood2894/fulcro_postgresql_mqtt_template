@@ -1,1 +1,9 @@
-{:taoensso.timbre/logging-config {:min-level :debug}}
+{:taoensso.timbre/logging-config {:min-level :debug}
+ :database-spec
+ {:username      "wasp"
+  :password      "wasp"
+  :server-name   "localhost"
+  :port-number   5433
+  :database-name "wasp"
+  ;:sslmode       "disable"
+  }}

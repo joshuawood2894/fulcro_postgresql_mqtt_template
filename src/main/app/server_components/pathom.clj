@@ -9,7 +9,7 @@
     [app.model.account :as acct]
     [app.model.session :as session]
     [app.server-components.config :refer [config]]
-    [app.model.mock-database :as db]))
+    [app.model.database :as db]))
 
 (pc/defresolver index-explorer [env _]
   {::pc/input  #{:com.wsscode.pathom.viz.index-explorer/id}
@@ -40,7 +40,7 @@
   (log/debug "Pathom transaction:" (pr-str tx))
   req)
 
-(defn build-parser [db-connection]
+(defn build-parser []
   (let [real-parser (p/parallel-parser
                       {::p/mutate  pc/mutate-async
                        ::p/env     {::p/reader               [p/map-reader pc/parallel-reader
@@ -51,8 +51,7 @@
                                                          ;; Here is where you can dynamically add things to the resolver/mutation
                                                          ;; environment, like the server config, database connections, etc.
                                                          (assoc env
-                                                           :db @db-connection ; real datomic would use (d/db db-connection)
-                                                           :connection db-connection
+                                                           ::db/pool db/pool
                                                            :config config)))
                                     (preprocess-parser-plugin log-requests)
                                     p/error-handler-plugin
@@ -68,5 +67,5 @@
                                     tx))))))
 
 (defstate parser
-  :start (build-parser db/conn))
+  :start (build-parser))
 

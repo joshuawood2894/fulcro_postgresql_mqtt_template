@@ -183,17 +183,17 @@
                    :root/login           {}
                    :root/current-session {}}}
   (let [current-tab (some-> (dr/current-route this this) first keyword)]
-    (div :.ui.container
-      (div :.ui.secondary.pointing.menu
-        (dom/a :.item {:classes [(when (= :main current-tab) "active")]
-                       :onClick (fn [] (dr/change-route this ["main"]))} "Main")
-        (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
-                       :onClick (fn [] (dr/change-route this ["settings"]))} "Settings")
-        (div :.right.menu
-          (ui-login login)))
-      (div :.ui.grid
-        (div :.ui.row
-          (ui-top-router router))))))
+      (div :.ui.container
+           (div :.ui.secondary.pointing.menu
+               (dom/a :.item {:classes [(when (= :main current-tab) "active")]
+                              :onClick (fn [] (dr/change-route this ["main"]))} "Main")
+               (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
+                              :onClick (fn [] (dr/change-route this ["settings"]))} "Settings")
+               (div :.right.menu
+                    (ui-login login)))
+           (div :.ui.grid
+                (div :.ui.row
+                     (ui-top-router router))))))
 
 (def ui-top-chrome (comp/factory TopChrome))
 
