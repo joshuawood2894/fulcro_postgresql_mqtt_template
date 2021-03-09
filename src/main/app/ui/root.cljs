@@ -46,7 +46,7 @@
                         (comp/transact! this [(session/clear-signup-form)]))}
   (let [submit!  (fn [evt]
                    (when (or (identical? true evt) (evt/enter-key? evt))
-                     (comp/transact! this [(session/signup! {:email email :password password})])
+                       (comp/transact! this [(session/signup! {:email email :password password})])
                      (log/info "Sign up")))
         checked? (fs/checked? props)]
     (div
@@ -90,7 +90,7 @@
    :initial-state {:account/email "" :ui/error ""}
    :ident         (fn [] [:component/id :login])}
   (let [current-state (uism/get-active-state this ::session/session)
-        {current-user :account/name} (get props [:component/id :session])
+        {current-user :account/email} (get props [:component/id :session])
         initial?      (= :initial current-state)
         loading?      (= :state/checking-session current-state)
         logged-in?    (= :state/logged-in current-state)
@@ -123,7 +123,7 @@
                     (div :.ui.error.message error)
                     (div :.ui.field
                       (dom/button :.ui.button
-                        {:onClick (fn [] (uism/trigger! this ::session/session :event/login {:username email
+                        {:onClick (fn [] (uism/trigger! this ::session/session :event/login {:email email
                                                                                              :password password}))
                          :classes [(when loading? "loading")]} "Login"))
                     (div :.ui.message

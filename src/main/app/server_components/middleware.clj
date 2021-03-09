@@ -72,7 +72,8 @@
   (fn [{:keys [uri anti-forgery-token] :as req}]
     (cond
       (#{"/" "/index.html"} uri)
-      (-> (resp/response (index anti-forgery-token))
+      (-> (resp/response
+            (index anti-forgery-token))
         (resp/content-type "text/html"))
 
       ;; See note above on the `wslive` function.
@@ -81,7 +82,8 @@
         (resp/content-type "text/html"))
 
       :else
-      (ring-handler req))))
+      (ring-handler req))
+    ))
 
 (defstate middleware
   :start
