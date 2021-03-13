@@ -1,6 +1,8 @@
 (ns app.ui.root
   (:require
+    ["antd" :refer [Space DatePicker DatePicker.RangePicker]
     [app.model.session :as session]
+    [app.ui.antd.date-picker :as antdp]
     [clojure.string :as str]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
@@ -13,7 +15,12 @@
     [com.fulcrologic.fulcro.algorithms.merge :as merge]
     [com.fulcrologic.fulcro-css.css :as css]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
+    [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
     [taoensso.timbre :as log]))
+
+(def space (interop/react-factory Space))
+(def date-picker (interop/react-factory DatePicker))
+(def range-picker (interop/react-factory DatePicker.RangePicker))
 
 (defn field [{:keys [label valid? error-message] :as props}]
   (let [input-props (-> props (assoc :name label) (dissoc :label :valid? :error-message))]
@@ -145,7 +152,10 @@
     (p (str "Welcome to the Fulcro template. "
          "The Sign up and login functionalities are partially implemented, "
          "but mostly this is just a blank slate waiting "
-         "for your project."))))
+         "for your project."))
+       (antdp/ui-range-picker)
+       )
+  )
 
 (defsc Settings [this {:keys [:account/time-zone :account/real-name] :as props}]
   {:query         [:account/time-zone :account/real-name :account/crap]
