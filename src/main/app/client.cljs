@@ -1,7 +1,9 @@
 (ns app.client
   (:require
     [app.application :refer [SPA]]
-    [app.ui.root :as root]
+    [app.ui.auth :as auth]
+    [app.ui.session :as session]
+    [app.model.session :as m-session]
     [com.fulcrologic.fulcro.application :as app]
     [app.ui.root :as root]
     [com.fulcrologic.fulcro.networking.http-remote :as net]
@@ -9,7 +11,6 @@
     [com.fulcrologic.fulcro.ui-state-machines :as uism]
     [com.fulcrologic.fulcro.components :as comp]
     [com.fulcrologic.fulcro-css.css-injection :as cssi]
-    [app.model.session :as session]
     [taoensso.timbre :as log]
     [com.fulcrologic.fulcro.algorithms.denormalize :as fdn]
     [com.fulcrologic.fulcro.algorithms.merge :as merge]
@@ -28,9 +29,9 @@
   (app/set-root! SPA root/Root {:initialize-state? true})
   (dr/initialize! SPA)
   (log/info "Starting session machine.")
-  (uism/begin! SPA session/session-machine ::session/session
-    {:actor/login-form      root/Login
-     :actor/current-session root/Session})
+  (uism/begin! SPA m-session/session-machine ::session/session
+    {:actor/login-form      auth/Login
+     :actor/current-session session/Session})
   (app/mount! SPA root/Root "app" {:initialize-state? false}))
 
 (comment
