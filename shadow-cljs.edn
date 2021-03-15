@@ -9,6 +9,8 @@
                        :dev        {:compiler-options
                                     {:external-config {:guardrails {}}}}
 
+                       :compiler-options {:output-feature-set :es6}
+
                        :devtools   {:after-load app.client/refresh
                                     :preloads   [com.fulcrologic.fulcro.inspect.preload app.development-preload]}}
 

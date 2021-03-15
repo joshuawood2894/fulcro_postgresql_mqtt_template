@@ -1,17 +1,28 @@
 (ns app.ui.auth
   (:require
+    ["antd" :refer [Drawer Form Button Col Row Input Select Select.Option]]
     [app.ui.session :as session]
     [app.model.session :as m-session]
-    [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b]]
+    [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 b]]
     [com.fulcrologic.fulcro.dom.html-entities :as ent]
     [com.fulcrologic.fulcro.dom.events :as evt]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
     [com.fulcrologic.fulcro.ui-state-machines :as uism :refer [defstatemachine]]
     [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
+    [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
     [com.fulcrologic.fulcro-css.css :as css]
     [taoensso.timbre :as log]))
+
+(def drawer (interop/react-factory Drawer))
+(def form (interop/react-factory Form))
+(def button (interop/react-factory Button))
+(def col (interop/react-factory Col))
+(def row (interop/react-factory Row))
+(def input (interop/react-factory Input))
+(def select (interop/react-factory Select))
+(def select-option (interop/react-factory Select.Option))
 
 (defn field [{:keys [label valid? error-message] :as props}]
   (let [input-props (-> props (assoc :name label) (dissoc :label :valid? :error-message))]
@@ -84,7 +95,8 @@
                                      :right    "0px"
                                      :top      "50px"}]]
    :initial-state {:account/email "" :ui/error ""}
-   :ident         (fn [] [:component/id :login])}
+   :ident         (fn [] [:component/id :login])
+   :initLocalState (fn [this _] {:visible true})}
   (let [current-state (uism/get-active-state this ::session/session)
         {current-user :account/email} (get props [:component/id :session])
         initial?      (= :initial current-state)
