@@ -5,7 +5,7 @@
                     Menu.Item Menu.ItemGroup Dropdown Space Divider Layout
                     Layout.Header Layout.Content Breadcrumb Breadcrumb.Item
                     Layout.Footer Layout.Sider Menu.SubMenu DatePicker
-                    DatePicker.RangePicker]]
+                    DatePicker.RangePicker Card.Meta]]
     ["@ant-design/icons" :refer [UserOutlined LockOutlined LineChartOutlined
                                  HomeOutlined SettingOutlined]]
     ["@ant-design/colors" :refer [blue.primary]]
@@ -46,5 +46,6 @@
 (def menu-submenu (interop/react-factory Menu.SubMenu))
 (def date-picker (interop/react-factory DatePicker))
 (def range-picker (interop/react-factory DatePicker.RangePicker))
+(def card-meta (interop/react-factory Card.Meta))
 
 (def blue-primary blue.primary)

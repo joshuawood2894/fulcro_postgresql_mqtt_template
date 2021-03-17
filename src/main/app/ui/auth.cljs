@@ -121,7 +121,7 @@
           (ant/dropdown {:overlay drop
                          :trigger ["click"]}
             (ant/avatar {:shape "square"
-                         :style {:backgroundColor ant/blue-primary}
+                         :style {:backgroundColor "#001529"}
                          :icon (ant/user-outlined)
                          :size 42}))
           (ant/button {:onClick #(uism/trigger! this ::session/session-id :event/toggle-modal)}

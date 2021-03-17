@@ -10,6 +10,6 @@
          (ant/range-picker {:showTime true
                             :format "MM/DD/YYYY, h:mm:ss A"
                             :size "default"
-                            :bordered true})))
+                            :bordered false})))
 
 (def ui-range-picker (comp/factory RangePicker))
