@@ -4,6 +4,7 @@
     "description": "",
     "private": true,
     "dependencies": {
+        "@ant-design/colors": "^6.0.0",
         "@ant-design/icons": "^4.5.0",
         "antd": "^4.13.1"
     },
