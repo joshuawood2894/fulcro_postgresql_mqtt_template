@@ -9,7 +9,7 @@
    :initial-state {:main/welcome-message "Hi!"}
    :ident         (fn [] [:component/id :main])
    :route-segment ["main"]}
-  (div :.ui.container.segment
+  (div
        (h3 "Main")
        (p (str "Welcome to the Fulcro template. "
                "The Sign up and login functionalities are partially implemented, "

@@ -9,6 +9,6 @@
    :ident         (fn [] [:component/id :settings])
    :route-segment ["settings"]
    :initial-state {}}
-  (div :.ui.container.segment
+  (div
        (h3 "Settings")
        (div "TODO")))
