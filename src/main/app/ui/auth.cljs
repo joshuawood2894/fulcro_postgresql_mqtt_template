@@ -1,6 +1,8 @@
 (ns app.ui.auth
   (:require
-    ["antd" :refer [Drawer Form Button Col Row Input Select Select.Option]]
+    ["antd" :refer [Drawer Form Button Col Row Input Input.Password Select
+                    Select.Option Modal Form.Item Card Spin]]
+    ["@ant-design/icons" :refer [UserOutlined LockOutlined]]
     [app.ui.session :as session]
     [app.model.session :as m-session]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 b]]
@@ -17,12 +19,19 @@
 
 (def drawer (interop/react-factory Drawer))
 (def form (interop/react-factory Form))
+(def form-item (interop/react-factory Form.Item))
 (def button (interop/react-factory Button))
 (def col (interop/react-factory Col))
 (def row (interop/react-factory Row))
 (def input (interop/react-factory Input))
+(def input-password (interop/react-factory Input.Password))
 (def select (interop/react-factory Select))
 (def select-option (interop/react-factory Select.Option))
+(def modal (interop/react-factory Modal))
+(def user-outlined (interop/react-factory UserOutlined))
+(def lock-outlined (interop/react-factory LockOutlined))
+(def card (interop/react-factory Card))
+(def spin (interop/react-factory Spin))
 
 (defn field [{:keys [label valid? error-message] :as props}]
   (let [input-props (-> props (assoc :name label) (dissoc :label :valid? :error-message))]
@@ -88,57 +97,110 @@
                     :ui/keys      [error open?] :as props}]
   {:query         [:ui/open? :ui/error :account/email
                    {[:component/id :session] (comp/get-query session/Session)}
-                   [::uism/asm-id ::session/session]]
+                   [::uism/asm-id ::session/session-id]]
    :css           [[:.floating-menu {:position "absolute !important"
                                      :z-index  1000
                                      :width    "300px"
                                      :right    "0px"
                                      :top      "50px"}]]
    :initial-state {:account/email "" :ui/error ""}
-   :ident         (fn [] [:component/id :login])
-   :initLocalState (fn [this _] {:visible true})}
-  (let [current-state (uism/get-active-state this ::session/session)
+   :ident         (fn [] [:component/id :login])}
+  (let [current-state (uism/get-active-state this ::session/session-id)
         {current-user :account/email} (get props [:component/id :session])
         initial?      (= :initial current-state)
         loading?      (= :state/checking-session current-state)
         logged-in?    (= :state/logged-in current-state)
         {:keys [floating-menu]} (css/get-classnames Login)
         password      (or (comp/get-state this :password) "")] ; c.l. state for security
-    (dom/div
-      (when-not initial?
-        (dom/div :.right.menu
-                 (if logged-in?
-                   (dom/button :.item
-                               {:onClick #(uism/trigger! this ::session/session :event/logout)}
-                               (dom/span current-user) ent/nbsp "Log out")
-                   (dom/div :.item {:style   {:position "relative"}
-                                    :onClick #(uism/trigger! this ::session/session :event/toggle-modal)}
-                            "Login"
-                            (when open?
-                              (dom/div :.four.wide.ui.raised.teal.segment {:onClick (fn [e]
-                                                                                      ;; Stop bubbling (would trigger the menu toggle)
-                                                                                      (evt/stop-propagation! e))
-                                                                           :classes [floating-menu]}
-                                       (dom/h3 :.ui.header "Login")
-                                       (div :.ui.form {:classes [(when (seq error) "error")]}
-                                            (field {:label    "Email"
-                                                    :value    email
-                                                    :onChange #(m/set-string! this :account/email :event %)})
-                                            (field {:label    "Password"
-                                                    :type     "password"
-                                                    :value    password
-                                                    :onChange #(comp/set-state! this {:password (evt/target-value %)})})
-                                            (div :.ui.error.message error)
-                                            (div :.ui.field
-                                                 (dom/button :.ui.button
-                                                             {:onClick (fn [] (uism/trigger! this ::session/session :event/login {:email email
-                                                                                                                                  :password password}))
-                                                              :classes [(when loading? "loading")]} "Login"))
-                                            (div :.ui.message
-                                                 (dom/p "Don't have an account?")
-                                                 (dom/a {:onClick (fn []
-                                                                    (uism/trigger! this ::session/session :event/toggle-modal {})
-                                                                    (dr/change-route this ["signup"]))}
-                                                        "Please sign up!"))))))))))))
+  (div
+    (when-not initial?
+      (div
+        (if logged-in?
+          (dom/span current-user
+            (button {:onClick #(uism/trigger! this ::session/session-id :event/logout)
+                     :style {:marginLeft "15px"}}
+                   ent/nbsp "Log out"))
+          (button {:onClick #(uism/trigger! this ::session/session-id :event/toggle-modal)}
+                  "Login"))
+        (modal {:title        "Login"
+                :visible      open?
+                :closable     false
+                :maskClosable false
+                :okText       "Log in"
+                :onOk         (fn []
+                                (uism/trigger! this ::session/session-id :event/login {:email    email
+                                                                                       :password password}))
+                :onCancel     (fn []
+                                (uism/trigger! this ::session/session-id :event/toggle-modal))}
+               (form {:labelCol {:span 0}
+                      :wrapperCol {:span 24}
+                      :name          "normal_login"
+                      :className "login-form"
+                      :initialValues {:remember false}
+                      :onFinish (fn [] (js/console.log "onFinish"))
+                      :onFinishFailed (fn [] (js/console.log "onFinishFailed"))}
+                     (form-item {:name "mmail"
+                                 :rules [{:message "Please input your email!"}]}
+                                (input {:prefix      (user-outlined)
+                                        :placeholder "Email"
+                                        :onChange #(m/set-string! this :account/email :event %)}))
+                     (form-item {:name "password"
+                                 :rules [{:message "Please input your
+                                 password!"}]}
+                                (input-password {:prefix (lock-outlined)
+                                                 :placeholder "Password"
+                                                 :onChange #(comp/set-state! this {:password (evt/target-value %)})
+                                                 }))
+                     (card {:style {:background "#eeee"}}
+                       (dom/p "Don't have an account?")
+                       (dom/p "Please "
+                          (dom/a {:onClick (fn []
+                             (uism/trigger! this ::session/session-id :event/toggle-modal {})
+                             (dr/change-route this
+                                              ["signup"]))} "Sign Up!"))))))))
+
+  ;(dom/div
+  ;    (when-not initial?
+  ;      (dom/div :.right.menu
+  ;               (if logged-in?
+  ;                 (dom/button :.item
+  ;                             {:onClick #(uism/trigger! this
+  ;                                                       ::session/session-id
+  ;                                                       :event/logout)}
+  ;                             (dom/span current-user) ent/nbsp "Log out")
+  ;                 (dom/div :.item {:style   {:position "relative"}
+  ;                                  :onClick #(uism/trigger! this
+  ;                                                           ::session/session-id :event/toggle-modal)
+  ;                                  }
+  ;                          "Login"
+  ;                          (when open?
+  ;                            (dom/div :.four.wide.ui.raised.teal.segment {:onClick (fn [e]
+  ;                                                                                    ;; Stop bubbling (would trigger the menu toggle)
+  ;                                                                                    (evt/stop-propagation! e))
+  ;                                                                         :classes [floating-menu]}
+  ;                                     (dom/h3 :.ui.header "Login")
+  ;                                     (div :.ui.form {:classes [(when (seq error) "error")]}
+  ;                                          (field {:label    "Email"
+  ;                                                  :value    email
+  ;                                                  :onChange #(m/set-string! this :account/email :event %)})
+  ;                                          (field {:label    "Password"
+  ;                                                  :type     "password"
+  ;                                                  :value    password
+  ;                                                  :onChange #(comp/set-state! this {:password (evt/target-value %)})})
+  ;                                          (div :.ui.error.message error)
+  ;                                          (div :.ui.field
+  ;                                               (dom/button :.ui.button
+  ;                                                           {:onClick (fn []
+  ;                                                                       (uism/trigger! this ::session/session-id :event/login {:email email
+  ;                                                                                                                                :password password}))
+  ;                                                            :classes [(when loading? "loading")]} "Login"))
+  ;                                          (div :.ui.message
+  ;                                               (dom/p "Don't have an account?")
+  ;                                               (dom/a {:onClick (fn []
+  ;                                                                  (uism/trigger! this ::session/session-id :event/toggle-modal {})
+  ;                                                                  (dr/change-route this ["signup"]))}
+  ;                                                      "Please sign up!"))))))))))
+
+  ))
 
 (def ui-login (comp/factory Login))
