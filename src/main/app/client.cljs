@@ -29,7 +29,7 @@
   (app/set-root! SPA root/Root {:initialize-state? true})
   (dr/initialize! SPA)
   (log/info "Starting session machine.")
-  (uism/begin! SPA m-session/session-machine ::session/session
+  (uism/begin! SPA m-session/session-machine ::session/session-id
     {:actor/login-form      auth/Login
      :actor/current-session session/Session})
   (app/mount! SPA root/Root "app" {:initialize-state? false}))
@@ -38,9 +38,9 @@
   (inspect/app-started! SPA)
   (app/mounted? SPA)
   (app/set-root! SPA root/Root {:initialize-state? true})
-  (uism/begin! SPA session/session-machine ::session/session
-    {:actor/login-form      root/Login
-     :actor/current-session root/Session})
+  (uism/begin! SPA session/session-machine ::session/session-id
+    {:actor/login-form      auth/Login
+     :actor/current-session session/Session})
 
   (reset! (::app/state-atom SPA) {})
 
@@ -63,4 +63,5 @@
   (let [s (app/current-state SPA)]
     (fdn/db->tree [{[:component/id :login] [:ui/open? :ui/error :account/email
                                             {[:root/current-session '_] (comp/get-query root/Session)}
-                                            [::uism/asm-id ::session/session]]}] {} s)))
+                                            [::uism/asm-id
+                                             ::session/session-id]]}] {} s)))

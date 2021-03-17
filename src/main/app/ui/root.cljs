@@ -84,7 +84,7 @@
                                                :onClick (fn [] (dr/change-route this ["settings"]))}
                                               "Settings"))
                                   ))
-              (layout {:style {:background "#ddd"}}
+              (layout {:style {:background "#eee"}}
                       (layout-header {:style {:background "#fff"
                                               :padding "0"
                                               :bottomBorder "5px solid black"}}
