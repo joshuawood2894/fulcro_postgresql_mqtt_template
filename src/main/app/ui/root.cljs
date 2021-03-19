@@ -8,6 +8,7 @@
     [app.ui.main :as main]
     [app.ui.session :as session]
     [app.ui.settings :as settings]
+    [app.ui.dashboard :as dashboard]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b hr]]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.routing.dynamic-routing :as dr]
@@ -33,7 +34,7 @@
 
 (dr/defrouter TopRouter [this props]
   {:router-targets [main/Main auth/Signup auth/SignupSuccess
-                    settings/Settings]})
+                    settings/Settings dashboard/Dashboard]})
 
 (def ui-top-router (comp/factory TopRouter))
 
@@ -47,65 +48,66 @@
                    :root/login           {}
                    :root/current-session {}}}
   (let [current-tab (some-> (dr/current-route this this) first keyword)]
-      ;(div :.ui.container
-      ;     (div :.ui.secondary.pointing.menu
-      ;         (dom/a :.item {:classes [(when (= :main current-tab) "active")]
-      ;                        :onClick (fn [] (dr/change-route this ["main"]))} "Main")
-      ;         (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
-      ;                        :onClick (fn [] (dr/change-route this ["settings"]))} "Settings")
-      ;         (div :.right.menu
-      ;              (auth/ui-login login)))
-      ;     (div :.ui.grid
-      ;          (div :.ui.row
-      ;               (ui-top-router router))))
+    ;(div :.ui.container
+    ;     (div :.ui.secondary.pointing.menu
+    ;         (dom/a :.item {:classes [(when (= :main current-tab) "active")]
+    ;                        :onClick (fn [] (dr/change-route this ["main"]))} "Main")
+    ;         (dom/a :.item {:classes [(when (= :settings current-tab) "active")]
+    ;                        :onClick (fn [] (dr/change-route this ["settings"]))} "Settings")
+    ;         (div :.right.menu
+    ;              (auth/ui-login login)))
+    ;     (div :.ui.grid
+    ;          (div :.ui.row
+    ;               (ui-top-router router))))
 
-      (layout {:style {:minHeight "100vh"}}
-              (layout-sider {:collapsible true}
-                            (div {:style {:height "32px"
-                                          :margin "16px"
-                                          :marginBottom "3vh"
-                                          :background "rgba(255, 255, 255, 0.3)"}})
-                            (menu {:theme "dark"
-                                   :defaultSelectedKeys "1"
-                                   :mode "inline"}
-                                  (menu-item {:key "1"
-                                              :icon (home-outlined)
-                                              :onClick (fn [] (dr/change-route this ["main"]))}
-                                             "Main")
-                                  (when (= true (:session/valid? current-session))
-                                    (menu-submenu {:key   "sub1"
-                                                   :icon  (line-chart-outlined)
-                                                   :title "Gateway"}
-                                                  (menu-item {:key "2"} "Dashboard")
-                                                  (menu-item {:key "3"} "Logger")))
-                                  (when (= true (:session/valid? current-session))
-                                    (menu-item {:key     "5"
-                                               :icon    (setting-outlined)
-                                               :onClick (fn [] (dr/change-route this ["settings"]))}
-                                              "Settings"))
-                                  ))
-              (layout {:style {:background "#eee"}}
-                      (layout-header {:style {:background "#fff"
-                                              :padding "0"
-                                              :bottomBorder "5px solid black"}}
-                                     (row {}
-                                       (col {:span 12})
-                                       (col {:span 12
-                                             :style {:paddingRight "40px"
-                                                     :textAlign "right"}}
-                                            (auth/ui-login login))))
-                      (layout-content {:style {:margin "16px"}}
-                                      (div {:style {:background "#eee"
-                                                    :padding 24
-                                                    :minHeight 360}}
-                                           (ui-top-router router)))
-                      (layout-footer {:style {:textAlign "center"
-                                              :background "#fff"}}
-                                     (dom/a {:href "https://pcdworks.com"
-                                             :target "_blank"}
-                                            (dom/img {:src "images/PCDlogo.svg"
-                                                      :alt "pcdworks.com"
-                                                      :width "300px"})))))))
+    (layout {:style {:minHeight "100vh"}}
+      (layout-sider {:collapsible true}
+        (div {:style {:height       "32px"
+                      :margin       "16px"
+                      :marginBottom "3vh"
+                      :background   "rgba(255, 255, 255, 0.3)"}})
+        (menu {:theme               "dark"
+               :defaultSelectedKeys "1"
+               :mode                "inline"}
+          (menu-item {:key     "1"
+                      :icon    (home-outlined)
+                      :onClick (fn [] (dr/change-route this ["main"]))}
+            "Main")
+          (when (= true (:session/valid? current-session))
+            (menu-submenu {:key   "sub1"
+                           :icon  (line-chart-outlined)
+                           :title "Gateway"}
+              (menu-item {:key     "2"
+                          :onClick (fn [] (dr/change-route this ["dashboard"]))} "Dashboard")
+              (menu-item {:key "3"} "Logger")))
+          (when (= true (:session/valid? current-session))
+            (menu-item {:key     "5"
+                        :icon    (setting-outlined)
+                        :onClick (fn [] (dr/change-route this ["settings"]))}
+              "Settings"))
+          ))
+      (layout {:style {:background "#eee"}}
+        (layout-header {:style {:background   "#fff"
+                                :padding      "0"
+                                :bottomBorder "5px solid black"}}
+          (row {}
+            (col {:span 12})
+            (col {:span  12
+                  :style {:paddingRight "40px"
+                          :textAlign    "right"}}
+              (auth/ui-login login))))
+        (layout-content {:style {:margin "16px"}}
+          (div {:style {:background "#eee"
+                        :padding    24
+                        :minHeight  360}}
+            (ui-top-router router)))
+        (layout-footer {:style {:textAlign  "center"
+                                :background "#fff"}}
+          (dom/a {:href   "https://pcdworks.com"
+                  :target "_blank"}
+            (dom/img {:src   "images/PCDlogo.svg"
+                      :alt   "pcdworks.com"
+                      :width "300px"})))))))
 
 (def ui-top-chrome (comp/factory TopChrome))
 
