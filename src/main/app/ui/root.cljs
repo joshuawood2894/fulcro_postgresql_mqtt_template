@@ -95,11 +95,12 @@
                                                      :textAlign "right"}}
                                             (auth/ui-login login))))
                       (layout-content {:style {:margin "16px"}}
-                                      (div {:style {:background "#fff"
+                                      (div {:style {:background "#eee"
                                                     :padding 24
                                                     :minHeight 360}}
                                            (ui-top-router router)))
-                      (layout-footer {:style {:textAlign "center"}}
+                      (layout-footer {:style {:textAlign "center"
+                                              :background "#fff"}}
                                      (dom/a {:href "https://pcdworks.com"
                                              :target "_blank"}
                                             (dom/img {:src "images/PCDlogo.svg"
