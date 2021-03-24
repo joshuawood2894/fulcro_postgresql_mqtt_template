@@ -52,46 +52,46 @@
     (div
       (dom/h3 "Signup")
 
-      (ant/form {:labelCol       {:span 0}
-                 :wrapperCol     {:span 12}
-                 :name           "normal_login"
-                 :initialValues  {:remember false}
-                 :onFinish       (fn [] (js/console.log "onFinish"))
-                 :onFinishFailed (fn [] (js/console.log "onFinishFailed"))}
-        (ant/form-item {:name  "email"
-                        :rules [{:message "Please input your email!"}]}
-          (ant/input {:prefix      (ant/user-outlined)
-                      :placeholder "Email"
-                      :onChange    #(m/set-string! this :account/email :event %)}))
-        (ant/form-item {:name  "password"
-                        :rules [{:message "Please input your password!"}]}
-          (ant/input-password {:prefix      (ant/lock-outlined)
-                               :placeholder "Password"
-                               :onChange    #(comp/set-state! this {:password (evt/target-value %)})})))
+      ;(ant/form {:labelCol       {:span 0}
+      ;           :wrapperCol     {:span 12}
+      ;           :name           "normal_login"
+      ;           :initialValues  {:remember false}
+      ;           :onFinish       (fn [] (js/console.log "onFinish"))
+      ;           :onFinishFailed (fn [] (js/console.log "onFinishFailed"))}
+      ;  (ant/form-item {:name  "email"
+      ;                  :rules [{:message "Please input your email!"}]}
+      ;    (ant/input {:prefix      (ant/user-outlined)
+      ;                :placeholder "Email"
+      ;                :onChange    #(m/set-string! this :account/email :event %)}))
+      ;  (ant/form-item {:name  "password"
+      ;                  :rules [{:message "Please input your password!"}]}
+      ;    (ant/input-password {:prefix      (ant/lock-outlined)
+      ;                         :placeholder "Password"
+      ;                         :onChange    #(comp/set-state! this {:password (evt/target-value %)})})))
 
-      ;(div :.ui.form {:classes [(when checked? "error")]}
-      ;     (field {:label         "Email"
-      ;             :value         (or email "")
-      ;             :valid?        (m-session/valid-email? email)
-      ;             :error-message "Must be an email address"
-      ;             :autoComplete  "off"
-      ;             :onKeyDown     submit!
-      ;             :onChange      #(m/set-string! this :account/email :event %)})
-      ;     (field {:label         "Password"
-      ;             :type          "password"
-      ;             :value         (or password "")
-      ;             :valid?        (m-session/valid-password? password)
-      ;             :error-message "Password must be at least 8 characters."
-      ;             :onKeyDown     submit!
-      ;             :autoComplete  "off"
-      ;             :onChange      #(m/set-string! this :account/password :event %)})
-      ;     (field {:label         "Repeat Password" :type "password" :value (or password-again "")
-      ;             :autoComplete  "off"
-      ;             :valid?        (= password password-again)
-      ;             :error-message "Passwords do not match."
-      ;             :onChange      #(m/set-string! this :account/password-again :event %)})
-      ;     (dom/button :.ui.primary.button {:onClick #(submit! true)}
-      ;                 "Sign Up"))
+      (div :.ui.form {:classes [(when checked? "error")]}
+           (field {:label         "Email"
+                   :value         (or email "")
+                   :valid?        (m-session/valid-email? email)
+                   :error-message "Must be an email address"
+                   :autoComplete  "off"
+                   :onKeyDown     submit!
+                   :onChange      #(m/set-string! this :account/email :event %)})
+           (field {:label         "Password"
+                   :type          "password"
+                   :value         (or password "")
+                   :valid?        (m-session/valid-password? password)
+                   :error-message "Password must be at least 8 characters."
+                   :onKeyDown     submit!
+                   :autoComplete  "off"
+                   :onChange      #(m/set-string! this :account/password :event %)})
+           (field {:label         "Repeat Password" :type "password" :value (or password-again "")
+                   :autoComplete  "off"
+                   :valid?        (= password password-again)
+                   :error-message "Passwords do not match."
+                   :onChange      #(m/set-string! this :account/password-again :event %)})
+           (dom/button :.ui.primary.button {:onClick #(submit! true)}
+                       "Sign Up"))
 
       )))
 

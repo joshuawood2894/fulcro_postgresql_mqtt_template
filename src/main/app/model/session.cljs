@@ -13,6 +13,7 @@
   (uism/assoc-aliased env :error ""))
 
 (defn logout [env]
+  (dr/change-route SPA ["main"])
   (-> env
     (clear)
     (uism/assoc-aliased :session-valid? false :current-user "" :user-id "")
