@@ -23,7 +23,7 @@
     (swap! state (fn [s]
                    (-> s
                      (insert-user* params)
-                     (merge/integrate-ident* [:account/id id] :append [:all-accounts])))))
+                     (targeting/integrate-ident* [:account/id id] :append [:all-accounts])))))
   (ok-action [env]
     (log/info "OK action"))
   (error-action [env]
