@@ -15,7 +15,7 @@
 (defn logout [env]
   (-> env
     (clear)
-    (uism/assoc-aliased :email "" :session-valid? false :current-user "")
+    (uism/assoc-aliased :account/email "" :session-valid? false :current-user "")
     (uism/trigger-remote-mutation :actor/login-form 'app.model.session/logout {})
     (uism/activate :state/logged-out)))
 
