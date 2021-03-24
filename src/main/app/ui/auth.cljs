@@ -141,20 +141,17 @@
             (ant/form {:labelCol       {:span 0}
                        :wrapperCol     {:span 24}
                        :name           "normal_login"
-                       :initialValues  {:remember false}
-                       :onFinish       (fn [] (js/console.log "onFinish"))
-                       :onFinishFailed (fn [] (js/console.log "onFinishFailed"))}
-              (ant/form-item {:name  "email"
-                              :rules [{:message "Please input your email!"}]}
+                       :initialValues  {:remember false}}
+              (ant/form-item {:name  "emmail"}
                 (ant/input {:prefix      (ant/user-outlined)
                             :placeholder "Email"
                             :onChange    #(m/set-string! this :account/email :event %)}))
-              (ant/form-item {:name  "password"
-                              :rules [{:message "Please input your
-                                 password!"}]}
+              (ant/form-item {:name  "password"}
                 (ant/input-password {:prefix      (ant/lock-outlined)
                                      :placeholder "Password"
                                      :onChange    #(comp/set-state! this {:password (evt/target-value %)})}))
+              (when (not= error "")
+                (dom/p {:style {:color "red"}} error))
               (ant/card {:style {:background "#eeee"}}
                 (dom/p "Don't have an account?")
                 (dom/p "Please "

@@ -36,49 +36,48 @@
    :initial-state {}
    :ident         (fn [] [:component/id :dashboard])
    :route-segment ["dashboard"]}
-  ;(div
-  ;  (ant/row {}
-  ;    (ant/col {}
-  ;      (ant/card {:style     {:width     400
-  ;                             :textAlign "center"}
-  ;                 :bodyStyle {:margin  "0px"
-  ;                             :padding "0px"}
-  ;                 :headStyle {:backgroundColor "#001529"
-  ;                             :color           "white"}
-  ;                 :title     "Percent Humidity"
-  ;                 :cover     (ac/ui-area-chart {:data         data-hum
-  ;                                               :x-axis-label "Time"
-  ;                                               :y-axis-label "Percentage"
-  ;                                               :unit-symbol  "%"
-  ;                                               :color        ant/blue-primary})
-  ;
-  ;                 :actions   [(dp/ui-range-picker {:key "setting"})]}))
-  ;    (ant/col {} (ant/card {:style     {:width     400
-  ;                                       :textAlign "center"}
-  ;                           :bodyStyle {:margin  "0px"
-  ;                                       :padding "0px"}
-  ;                           :headStyle {:backgroundColor "#001529"
-  ;                                       :color           "white"}
-  ;                           :title     "Temperature in Degrees Celsius"
-  ;                           :cover     (lc/ui-line-chart {:data         data-temp
-  ;                                                         :x-axis-label "Time"
-  ;                                                         :y-axis-label "Degrees Celsius"
-  ;                                                         :unit-symbol  (char 176)
-  ;                                                         :color        ant/blue-primary})
-  ;
-  ;                           :actions   [(dp/ui-range-picker {:key "setting"})]}))
+  (div
+    (ant/row {}
+      (ant/col {}
+        (ant/card {:style     {:width     400
+                               :textAlign "center"}
+                   :bodyStyle {:margin  "0px"
+                               :padding "0px"}
+                   :headStyle {:backgroundColor "#001529"
+                               :color           "white"}
+                   :title     "Percent Humidity"
+                   :cover     (ac/ui-area-chart {:data         data-hum
+                                                 :x-axis-label "Time"
+                                                 :y-axis-label "Percentage"
+                                                 :unit-symbol  "%"
+                                                 :color        ant/blue-primary})
 
-        (responsive-grid-layout {:className   "layout"
-                                 :layouts     layout
-                                 :breakpoints {:lg 1200 :md 996 :sm 768 :xs 480 :xxs 0}
-                                 :cols        {:lg 12 :md 10 :sm 6 :xs 4 :xxs 2}}
-          (div {:key 1
-                :style {:backgroundColor "blue"}} 1)
-          (div {:key 2
-                :style {:backgroundColor "red"}} 2)
-          (div {:key 3
-                :style {:backgroundColor "white"}} 3))
+                   :actions   [(dp/ui-range-picker {:key "setting"})]}))
+      (ant/col {} (ant/card {:style     {:width     400
+                                         :textAlign "center"}
+                             :bodyStyle {:margin  "0px"
+                                         :padding "0px"}
+                             :headStyle {:backgroundColor "#001529"
+                                         :color           "white"}
+                             :title     "Temperature in Degrees Celsius"
+                             :cover     (lc/ui-line-chart {:data         data-temp
+                                                           :x-axis-label "Time"
+                                                           :y-axis-label "Degrees Celsius"
+                                                           :unit-symbol  (char 176)
+                                                           :color        ant/blue-primary})
+
+                             :actions   [(dp/ui-range-picker {:key "setting"})]}))
+
+        ;(responsive-grid-layout {:className   "layout"
+        ;                         :layouts     layout
+        ;                         :breakpoints {:lg 1200 :md 996 :sm 768 :xs 480 :xxs 0}
+        ;                         :cols        {:lg 12 :md 10 :sm 6 :xs 4 :xxs 2}}
+        ;  (div {:key 1
+        ;        :style {:backgroundColor "blue"}} 1)
+        ;  (div {:key 2
+        ;        :style {:backgroundColor "red"}} 2)
+        ;  (div {:key 3
+        ;        :style {:backgroundColor "white"}} 3))
 
 
-      )
-;))
+             )))
