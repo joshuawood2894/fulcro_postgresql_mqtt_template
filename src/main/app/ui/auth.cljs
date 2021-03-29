@@ -133,16 +133,25 @@
                       :closable     false
                       :maskClosable false
                       :okText       "Log in"
-                      :onOk         (fn []
-                                      (uism/trigger! this ::session/session-id :event/login {:email    email
-                                                                                             :password password}))
-                      :onCancel     (fn []
-                                      (uism/trigger! this ::session/session-id :event/toggle-modal))}
+                      :footer       [(ant/button {:key "back"
+                                                  :onClick (fn []
+                                                               (uism/trigger! this ::session/session-id :event/toggle-modal))
+                                                  :size "middle"}
+                                                 "Cancel")
+                                     (ant/button {:key "submit"
+                                                  :onClick (fn []
+                                                             (uism/trigger! this ::session/session-id :event/login {:email    email
+                                                                                                                    :password password}))
+                                                  :loading loading?
+                                                  :size "middle"
+                                                  :style {:background ant/blue-primary
+                                                          :color "white"}}
+                                                 "Log in")]}
             (ant/form {:labelCol       {:span 0}
                        :wrapperCol     {:span 24}
                        :name           "normal_login"
                        :initialValues  {:remember false}}
-              (ant/form-item {:name  "emmail"}
+              (ant/form-item {:name  "email"}
                 (ant/input {:prefix      (ant/user-outlined)
                             :placeholder "Email"
                             :onChange    #(m/set-string! this :account/email :event %)}))

@@ -93,7 +93,7 @@
                                     ::uism/handler       login}})}}})
 
 (def signup-ident [:component/id :signup])
-(defn signup-class [] (comp/registry-key->class :app.ui.root/Signup))
+(defn signup-class [] (comp/registry-key->class :app.ui.auth/Signup))
 
 (defn clear-signup-form*
   "Mutation helper: Updates state map with a cleared signup form that is configured for form state support."
@@ -109,6 +109,19 @@
   (action [{:keys [state]}]
     (swap! state clear-signup-form*)))
 
+;(defn signup-valid?
+;  [{:account/keys [email password password-again] :as form} field]
+;  (try
+;    (case field
+;      :account/email (str/includes? email "@")
+;      :account/password (> (count password) 7)
+;      :account/password-again (= password-again password)
+;      true)
+;    (catch :default _
+;      false)))
+;
+;(def signup-validator (fs/make-validator signup-valid))
+
 (defn valid-email? [email] (str/includes? email "@"))
 (defn valid-password? [password] (> (count password) 7))
 
@@ -117,9 +130,11 @@
     (log/info "Marking complete")
     (swap! state fs/mark-complete* signup-ident))
   (ok-action [{:keys [app state]}]
-    (dr/change-route app ["signup-success"]))
+    (dr/change-route app ["signup-success"])
+             (js/console.log "hello"))
   (remote [{:keys [state] :as env}]
     (let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
       (boolean (and (valid-email? email) (valid-password? password)
-                 (= password password-again))))))
+                 (= password password-again)))))
+  )
 
