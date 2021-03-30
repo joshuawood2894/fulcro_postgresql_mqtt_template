@@ -72,7 +72,8 @@
       (div :.ui.form {:classes [(when checked? "error")]}
            (field {:label         "Email"
                    :value         (or email "")
-                   :valid?        (m-session/valid-email? email)
+                   ;:valid?        (m-session/valid-email? email)
+                   :valid?        (= :valid (m-session/signup-validator props :account/email))
                    :error-message "Must be an email address"
                    :autoComplete  "off"
                    :onKeyDown     submit!
@@ -80,14 +81,16 @@
            (field {:label         "Password"
                    :type          "password"
                    :value         (or password "")
-                   :valid?        (m-session/valid-password? password)
+                   ;:valid?        (m-session/valid-password? password)
+                   :valid?        (= :valid (m-session/signup-validator props :account/password))
                    :error-message "Password must be at least 8 characters."
                    :onKeyDown     submit!
                    :autoComplete  "off"
                    :onChange      #(m/set-string! this :account/password :event %)})
            (field {:label         "Repeat Password" :type "password" :value (or password-again "")
                    :autoComplete  "off"
-                   :valid?        (= password password-again)
+                   :valid?        (= :valid (m-session/signup-validator props :account/password-again))
+                   ;:valid?        (= password password-again)
                    :error-message "Passwords do not match."
                    :onChange      #(m/set-string! this :account/password-again :event %)})
            (dom/button :.ui.primary.button {:onClick #(submit! true)}

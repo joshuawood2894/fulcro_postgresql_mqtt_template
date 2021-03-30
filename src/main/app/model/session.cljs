@@ -7,6 +7,7 @@
     [com.fulcrologic.fulcro.components :as comp]
     [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
+    [com.fulcrologic.fulcro.algorithms.denormalize :as fdn]
     [clojure.string :as str]))
 
 (defn clear [env]
@@ -109,32 +110,49 @@
   (action [{:keys [state]}]
     (swap! state clear-signup-form*)))
 
-;(defn signup-valid?
-;  [{:account/keys [email password password-again] :as form} field]
-;  (try
-;    (case field
-;      :account/email (str/includes? email "@")
-;      :account/password (> (count password) 7)
-;      :account/password-again (= password-again password)
-;      true)
-;    (catch :default _
-;      false)))
-;
-;(def signup-validator (fs/make-validator signup-valid))
+(defn signup-valid?
+  [{:account/keys [email password password-again] :as form} field]
+  (try
+    (case field
+      :account/email (str/includes? email "@")
+      :account/password (> (count password) 7)
+      :account/password-again (= password-again password)
+      true)
+    (catch :default _
+      false)))
+
+(def signup-validator (fs/make-validator signup-valid?))
 
 (defn valid-email? [email] (str/includes? email "@"))
 (defn valid-password? [password] (> (count password) 7))
 
-(defmutation signup! [_]
-  (action [{:keys [state]}]
-    (log/info "Marking complete")
-    (swap! state fs/mark-complete* signup-ident))
+(defmutation signup-success! [{:keys [email password] :as params}]
+  (action [{:keys [app state]}]
+    (log/info "signup-success!: " email))
+  (remote [env] true)
   (ok-action [{:keys [app state]}]
-    (dr/change-route app ["signup-success"])
-             (js/console.log "hello"))
-  (remote [{:keys [state] :as env}]
-    (let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
-      (boolean (and (valid-email? email) (valid-password? password)
-                 (= password password-again)))))
+    (dr/change-route app ["signup-success"])))
+
+(defmutation signup! [{:keys [email password] :as params}]
+  (action [{:keys [app state]}]
+    (let [ident             signup-ident
+          completed-state   (fs/mark-complete! ident)
+          form              (get-in completed-state ident)
+          Signup            (comp/registry-key->class :app.ui.auth/Signup)
+          signup-props      (fdn/db->tree (comp/get-query Signup) form completed-state)
+          valid?            (= :valid (signup-validator signup-props))
+          ]
+      (log/info "Marking complete")
+     ;(swap! state fs/mark-complete* signup-ident)
+      (js/console.log (signup-validator signup-props))
+      (when (= true valid?) (comp/transact! app [(signup-success! params)]))
+      ))
+  ;(ok-action [{:keys [app state]}]
+  ;  (dr/change-route app ["signup-success"]))
+  ;(remote [{:keys [state] :as env}]
+  ;  ;(let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
+  ;  ;  (boolean (and (valid-email? email) (valid-password? password)
+  ;  ;             (= password password-again))))
+  ;  false)
   )
 
