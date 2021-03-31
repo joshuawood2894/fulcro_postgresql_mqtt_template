@@ -51,7 +51,7 @@
   {::pc/output [:session/valid?]}
   (response-updating-session env {:session/valid? false}))
 
-(defmutation signup! [{:keys [db/pool] :as env} {:keys [email password]}]
+(defmutation signup-success! [{:keys [db/pool] :as env} {:keys [email password]}]
   {::pc/output [:signup/result]}
   (let [hashed-password (hs/derive password)]
    (log/info "Signing Up" email)
@@ -62,4 +62,4 @@
                      :returning   [:id]})
    {:signup/result "OK"}))
 
-(def resolvers [current-session-resolver login logout signup!])
+(def resolvers [current-session-resolver login logout signup-success!])

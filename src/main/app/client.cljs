@@ -31,7 +31,8 @@
   (log/info "Starting session machine.")
   (uism/begin! SPA m-session/session-machine ::session/session-id
     {:actor/login-form      auth/Login
-     :actor/current-session session/Session})
+     :actor/current-session session/Session
+     :actor/signup-form     auth/Signup})
   (app/mount! SPA root/Root "app" {:initialize-state? false}))
 
 (comment

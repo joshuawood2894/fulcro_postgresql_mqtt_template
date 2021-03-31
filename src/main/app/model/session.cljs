@@ -21,6 +21,21 @@
     (uism/trigger-remote-mutation :actor/login-form 'app.model.session/logout {})
     (uism/activate :state/logged-out)))
 
+(defn signup-modal-enter [env]
+  (-> env
+    (clear)
+    (uism/update-aliased :login-modal-open? not)
+    (uism/update-aliased :signup-modal-open? not)
+    (uism/activate :state/signup)
+    ))
+
+(defn signup-modal-exit [env]
+  (-> env
+    (clear)
+    (uism/update-aliased :login-modal-open? not)
+    (uism/update-aliased :signup-modal-open? not)
+    (uism/activate :state/logged-out)))
+
 (defn login [{::uism/keys [event-data] :as env}]
   (-> env
     (clear)
@@ -38,26 +53,28 @@
       (dr/change-route SPA ["main"]))
     (cond-> (clear env)
       success? (->
-                 (uism/assoc-aliased :modal-open? false)
+                 (uism/assoc-aliased :login-modal-open? false)
                  (uism/activate :state/logged-in))
       (not success?) (->
                        (uism/assoc-aliased :error error-message)
                        (uism/activate :state/logged-out)))))
 
 (def global-events
-  {:event/toggle-modal {::uism/handler (fn [env] (uism/update-aliased env :modal-open? not))}})
+  {:event/toggle-login-modal {::uism/handler (fn [env] (uism/update-aliased env
+                                                         :login-modal-open? not))}})
 
 (uism/defstatemachine session-machine
   {::uism/actors
-   #{:actor/login-form :actor/current-session}
+   #{:actor/login-form :actor/current-session :actor/signup-form}
 
    ::uism/aliases
-   {:email          [:actor/login-form :account/email]
-    :error          [:actor/login-form :ui/error]
-    :modal-open?    [:actor/login-form :ui/open?]
-    :session-valid? [:actor/current-session :session/valid?]
-    :current-user   [:actor/current-session :account/email]
-    :user-id        [:actor/current-session :account/id]}
+   {:email              [:actor/login-form :account/email]
+    :error              [:actor/login-form :ui/error]
+    :login-modal-open?  [:actor/login-form :ui/open?]
+    :session-valid?     [:actor/current-session :session/valid?]
+    :current-user       [:actor/current-session :account/email]
+    :user-id            [:actor/current-session :account/id]
+    :signup-modal-open? [:actor/signup-form :ui/signup-open?]}
 
    ::uism/states
    {:initial
@@ -74,24 +91,36 @@
                                             ::uism/handler       #(process-session-result % "")}}}
 
     :state/checking-session
-    {::uism/events (merge global-events
-                     {:event/failed   {::uism/target-states #{:state/logged-out}
-                                       ::uism/handler       (fn [env]
-                                                              (-> env
-                                                                (clear)
-                                                                (uism/assoc-aliased :error "Server error.")))}
-                      :event/complete {::uism/target-states #{:state/logged-out :state/logged-in}
-                                       ::uism/handler       #(process-session-result % "Invalid Credentials.")}})}
+    {::uism/events
+     (merge global-events
+       {:event/failed   {::uism/target-states #{:state/logged-out}
+                         ::uism/handler       (fn [env]
+                                                (-> env
+                                                  (clear)
+                                                  (uism/assoc-aliased :error "Server error.")))}
+        :event/complete {::uism/target-states #{:state/logged-out :state/logged-in}
+                         ::uism/handler       #(process-session-result % "Invalid Credentials.")}})}
 
     :state/logged-in
-    {::uism/events (merge global-events
-                     {:event/logout {::uism/target-states #{:state/logged-out}
-                                     ::uism/handler       logout}})}
+    {::uism/events
+     (merge global-events
+       {:event/logout {::uism/target-states #{:state/logged-out}
+                       ::uism/handler       logout}})}
 
     :state/logged-out
-    {::uism/events (merge global-events
-                     {:event/login {::uism/target-states #{:state/checking-session}
-                                    ::uism/handler       login}})}}})
+    {::uism/events
+     (merge global-events
+       {:event/login              {::uism/target-states #{:state/checking-session}
+                                   ::uism/handler       login}
+        :event/enter-signup-modal {::uism/target-states #{:state/signup}
+                                   ::uism/handler       signup-modal-enter
+                                   }})}
+
+    :state/signup
+    {::uism/events
+     {:event/exit-signup-modal {::uism/target-states #{:state/logged-out}
+                                ::uism/handler       signup-modal-exit}}}}})
+
 
 (def signup-ident [:component/id :signup])
 (defn signup-class [] (comp/registry-key->class :app.ui.auth/Signup))
@@ -123,36 +152,25 @@
 
 (def signup-validator (fs/make-validator signup-valid?))
 
-(defn valid-email? [email] (str/includes? email "@"))
-(defn valid-password? [password] (> (count password) 7))
-
 (defmutation signup-success! [{:keys [email password] :as params}]
   (action [{:keys [app state]}]
-    (log/info "signup-success!: " email))
+    (js/console.log "signup-success!: " email))
   (remote [env] true)
   (ok-action [{:keys [app state]}]
     (dr/change-route app ["signup-success"])))
 
 (defmutation signup! [{:keys [email password] :as params}]
   (action [{:keys [app state]}]
-    (let [ident             signup-ident
-          completed-state   (fs/mark-complete! ident)
-          form              (get-in completed-state ident)
-          Signup            (comp/registry-key->class :app.ui.auth/Signup)
-          signup-props      (fdn/db->tree (comp/get-query Signup) form completed-state)
-          valid?            (= :valid (signup-validator signup-props))
+    (let [ident signup-ident
+          completed-state (fs/mark-complete* @state ident)
+          form (get-in completed-state ident)
+          Signup (comp/registry-key->class :app.ui.auth/Signup)
+          signup-props (fdn/db->tree (comp/get-query Signup) form completed-state)
+          valid? (= :valid (signup-validator signup-props))
           ]
-      (log/info "Marking complete")
-     ;(swap! state fs/mark-complete* signup-ident)
-      (js/console.log (signup-validator signup-props))
-      (when (= true valid?) (comp/transact! app [(signup-success! params)]))
-      ))
-  ;(ok-action [{:keys [app state]}]
-  ;  (dr/change-route app ["signup-success"]))
-  ;(remote [{:keys [state] :as env}]
-  ;  ;(let [{:account/keys [email password password-again]} (get-in @state signup-ident)]
-  ;  ;  (boolean (and (valid-email? email) (valid-password? password)
-  ;  ;             (= password password-again))))
-  ;  false)
-  )
+      (js/console.log "Marking complete")
+      (if valid?
+        (comp/transact! app [(signup-success! params)])
+        (reset! state completed-state))
+      )))
 

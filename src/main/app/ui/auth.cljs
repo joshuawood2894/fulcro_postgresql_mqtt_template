@@ -32,8 +32,10 @@
     (dom/h3 "Signup Complete!")
     (dom/p "You can now log in!")))
 
-(defsc Signup [this {:account/keys [email password password-again] :as props}]
-  {:query             [:account/email :account/password :account/password-again fs/form-config-join]
+(defsc Signup [this {:account/keys [email password password-again]
+                     :ui/keys      [signup-open?] :as props}]
+  {:query             [:ui/signup-open? [::uism/asm-id ::session/session-id]
+                       :account/email :account/password :account/password-again fs/form-config-join]
    :initial-state     (fn [_]
                         (fs/add-form-config Signup
                           {:account/email          ""
@@ -41,62 +43,129 @@
                            :account/password-again ""}))
    :form-fields       #{:account/email :account/password :account/password-again}
    :ident             (fn [] m-session/signup-ident)
-   :route-segment     ["signup"]
+   ;:route-segment     ["signup"]
    :componentDidMount (fn [this]
                         (comp/transact! this [(m-session/clear-signup-form)]))}
   (let [submit! (fn [evt]
                   (when (or (identical? true evt) (evt/enter-key? evt))
                     (comp/transact! this [(m-session/signup! {:email email :password password})])
                     (log/info "Sign up")))
-        checked? (fs/checked? props)]
-    (div
-      (dom/h3 "Signup")
+        checked? (fs/checked? props)
+        email-valid? (= :invalid (m-session/signup-validator props
+                                  :account/email))
+        password-valid? (= :invalid (m-session/signup-validator props
+                                    :account/password))
+        password-again-valid? (= :invalid (m-session/signup-validator props
+                                          :account/password-again))]
 
-      ;(ant/form {:labelCol       {:span 0}
-      ;           :wrapperCol     {:span 12}
-      ;           :name           "normal_login"
-      ;           :initialValues  {:remember false}
-      ;           :onFinish       (fn [] (js/console.log "onFinish"))
-      ;           :onFinishFailed (fn [] (js/console.log "onFinishFailed"))}
-      ;  (ant/form-item {:name  "email"
-      ;                  :rules [{:message "Please input your email!"}]}
-      ;    (ant/input {:prefix      (ant/user-outlined)
-      ;                :placeholder "Email"
-      ;                :onChange    #(m/set-string! this :account/email :event %)}))
-      ;  (ant/form-item {:name  "password"
-      ;                  :rules [{:message "Please input your password!"}]}
-      ;    (ant/input-password {:prefix      (ant/lock-outlined)
-      ;                         :placeholder "Password"
-      ;                         :onChange    #(comp/set-state! this {:password (evt/target-value %)})})))
 
-      (div :.ui.form {:classes [(when checked? "error")]}
-           (field {:label         "Email"
-                   :value         (or email "")
-                   ;:valid?        (m-session/valid-email? email)
-                   :valid?        (= :valid (m-session/signup-validator props :account/email))
-                   :error-message "Must be an email address"
-                   :autoComplete  "off"
-                   :onKeyDown     submit!
-                   :onChange      #(m/set-string! this :account/email :event %)})
-           (field {:label         "Password"
-                   :type          "password"
-                   :value         (or password "")
-                   ;:valid?        (m-session/valid-password? password)
-                   :valid?        (= :valid (m-session/signup-validator props :account/password))
-                   :error-message "Password must be at least 8 characters."
-                   :onKeyDown     submit!
-                   :autoComplete  "off"
-                   :onChange      #(m/set-string! this :account/password :event %)})
-           (field {:label         "Repeat Password" :type "password" :value (or password-again "")
-                   :autoComplete  "off"
-                   :valid?        (= :valid (m-session/signup-validator props :account/password-again))
-                   ;:valid?        (= password password-again)
-                   :error-message "Passwords do not match."
-                   :onChange      #(m/set-string! this :account/password-again :event %)})
-           (dom/button :.ui.primary.button {:onClick #(submit! true)}
-                       "Sign Up"))
+    ;(ant/form {:labelCol       {:span 0}
+    ;           :wrapperCol     {:span 12}
+    ;           :name           "normal_login"
+    ;           :initialValues  {:remember false}
+    ;           :onFinish       (fn [] (js/console.log "onFinish"))
+    ;           :onFinishFailed (fn [] (js/console.log "onFinishFailed"))}
+    ;  (ant/form-item {:name  "email"
+    ;                  :rules [{:message "Please input your email!"}]}
+    ;    (ant/input {:prefix      (ant/user-outlined)
+    ;                :placeholder "Email"
+    ;                :onChange    #(m/set-string! this :account/email :event %)}))
+    ;  (ant/form-item {:name  "password"
+    ;                  :rules [{:message "Please input your password!"}]}
+    ;    (ant/input-password {:prefix      (ant/lock-outlined)
+    ;                         :placeholder "Password"
+    ;                         :onChange    #(comp/set-state! this {:password (evt/target-value %)})})))
+
+
+    (ant/modal {:title        "sign up"
+                :width        "20vw"
+                :style        {:minWidth "300px"}
+                ;:visible      true
+                :visible      signup-open?
+                :closable     false
+                :maskClosable false
+                :okText       "Log in"
+                :footer       [(ant/button {:key     "back"
+                                            :onClick (fn []
+                                                       (uism/trigger! this ::session/session-id
+                                                         :event/exit-signup-modal))
+                                            :size    "middle"}
+                                 "Cancel")
+                               (ant/button {:key     "submit"
+                                            :onClick (fn []
+                                                       (when
+                                                         (= :valid (m-session/signup-validator props))
+                                                         (uism/trigger! this ::session/session-id
+                                                           :event/exit-signup-modal))
+                                                       (submit! true))
+                                            :size    "middle"
+                                            :style   {:background ant/blue-primary
+                                                      :color      "white"}}
+                                 "Sign up")]}
+      ;(div
+      ;  (dom/h3 "Signup")
+      ;  (div :.ui.form {:classes [(when checked? "error")]}
+      ;    (field {:label         "Email"
+      ;            :value         (or email "")
+      ;            ;:valid?        (m-session/valid-email? email)
+      ;            :valid?        (not email-valid?)
+      ;            :error-message "Must be an email address"
+      ;            :autoComplete  "off"
+      ;            :onKeyDown     submit!
+      ;            :onChange      #(m/set-string! this :account/email :event %)})
+      ;    (field {:label         "Password"
+      ;            :type          "password"
+      ;            :value         (or password "")
+      ;            ;:valid?        (m-session/valid-password? password)
+      ;            :valid?        (not password-valid?)
+      ;            :error-message "Password must be at least 8 characters."
+      ;            :onKeyDown     submit!
+      ;            :autoComplete  "off"
+      ;            :onChange      #(m/set-string! this :account/password :event %)})
+      ;    (field {:label         "Repeat Password" :type "password" :value (or password-again "")
+      ;            :autoComplete  "off"
+      ;            :valid?        (not password-again-valid?)
+      ;            ;:valid?        (= password password-again)
+      ;            :error-message "Passwords do not match."
+      ;            :onChange      #(m/set-string! this :account/password-again :event %)})
+      ;    (dom/button :.ui.primary.button {:onClick #(submit! true)}
+      ;      "Sign Up"))
+      ;  )
+
+      (ant/form {:labelCol       {:span 0}
+                 :wrapperCol     {:span 24}
+                 :name           "normal_login"
+                 :initialValues  {:remember false}}
+        (ant/form-item {:name  "email"}
+          (ant/input {:prefix      (ant/user-outlined)
+                      :placeholder "Email"
+                      :onChange    #(m/set-string! this :account/email :event %)
+                      :onKeyDown     submit!}))
+        (when (and checked? email-valid?)
+          (dom/p {:style {:color "red"}} "Must be an email address."))
+        (ant/form-item {:name  "password"}
+          (ant/input-password {:prefix      (ant/lock-outlined)
+                               :placeholder "Password"
+                               :onChange    #(m/set-string! this :account/password :event %)
+                               :onKeyDown     submit!}))
+        (when (and checked? password-valid?)
+          (dom/p {:style {:color "red"}} "Password must be at least 8
+          characters."))
+
+        (ant/form-item {:name  "confirm password"}
+          (ant/input-password {:prefix      (ant/lock-outlined)
+                               :placeholder "Confirm Password"
+                               :onChange    #(m/set-string! this
+                                               :account/password-again :event %)
+                               :onKeyDown     submit!}))
+        (when (and checked? password-again-valid?)
+          (dom/p {:style {:color "red"}} "Password must match."))
+        )
+
 
       )))
+
+(def ui-signup (comp/factory Signup))
 
 (defsc Login [this {:account/keys [email]
                     :ui/keys      [error open?] :as props}]
@@ -127,7 +196,7 @@
                            :style {:backgroundColor "#001529"}
                            :icon  (ant/user-outlined)
                            :size  42}))
-            (ant/button {:onClick #(uism/trigger! this ::session/session-id :event/toggle-modal)}
+            (ant/button {:onClick #(uism/trigger! this ::session/session-id :event/toggle-login-modal)}
               "Login"))
           (ant/modal {:title        "Login"
                       :width        "20vw"
@@ -136,29 +205,29 @@
                       :closable     false
                       :maskClosable false
                       :okText       "Log in"
-                      :footer       [(ant/button {:key "back"
+                      :footer       [(ant/button {:key     "back"
                                                   :onClick (fn []
-                                                               (uism/trigger! this ::session/session-id :event/toggle-modal))
-                                                  :size "middle"}
-                                                 "Cancel")
-                                     (ant/button {:key "submit"
+                                                             (uism/trigger! this ::session/session-id :event/toggle-login-modal))
+                                                  :size    "middle"}
+                                       "Cancel")
+                                     (ant/button {:key     "submit"
                                                   :onClick (fn []
                                                              (uism/trigger! this ::session/session-id :event/login {:email    email
                                                                                                                     :password password}))
                                                   :loading loading?
-                                                  :size "middle"
-                                                  :style {:background ant/blue-primary
-                                                          :color "white"}}
-                                                 "Log in")]}
-            (ant/form {:labelCol       {:span 0}
-                       :wrapperCol     {:span 24}
-                       :name           "normal_login"
-                       :initialValues  {:remember false}}
-              (ant/form-item {:name  "email"}
+                                                  :size    "middle"
+                                                  :style   {:background ant/blue-primary
+                                                            :color      "white"}}
+                                       "Log in")]}
+            (ant/form {:labelCol      {:span 0}
+                       :wrapperCol    {:span 24}
+                       :name          "normal_login"
+                       :initialValues {:remember false}}
+              (ant/form-item {:name "email"}
                 (ant/input {:prefix      (ant/user-outlined)
                             :placeholder "Email"
                             :onChange    #(m/set-string! this :account/email :event %)}))
-              (ant/form-item {:name  "password"}
+              (ant/form-item {:name "password"}
                 (ant/input-password {:prefix      (ant/lock-outlined)
                                      :placeholder "Password"
                                      :onChange    #(comp/set-state! this {:password (evt/target-value %)})}))
@@ -168,9 +237,11 @@
                 (dom/p "Don't have an account?")
                 (dom/p "Please "
                   (dom/a {:onClick (fn []
-                                     (uism/trigger! this ::session/session-id :event/toggle-modal {})
-                                     (dr/change-route this
-                                       ["signup"]))} "Sign Up!"))))))))
+                                     (uism/trigger! this ::session/session-id
+                                       :event/enter-signup-modal)
+                                     ;(dr/change-route this
+                                     ;  ["signup"])
+                                     )} "Sign Up!"))))))))
     ;(dom/div
     ;    (when-not initial?
     ;      (dom/div :.right.menu
