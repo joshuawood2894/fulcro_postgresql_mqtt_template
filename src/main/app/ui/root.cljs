@@ -17,10 +17,8 @@
 
 
 (dr/defrouter TopRouter [this props]
-  {:router-targets [main/Main
-                    ;auth/Signup
-                    auth/SignupSuccess
-                    settings/Settings dashboard/Dashboard datal/DataLogger
+  {:router-targets [main/Main auth/SignupSuccess settings/Settings
+                    dashboard/Dashboard datal/DataLogger
                     mqttl/MqttLogger]})
 
 (def ui-top-router (comp/factory TopRouter))

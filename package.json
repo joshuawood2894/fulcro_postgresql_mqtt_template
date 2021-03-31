@@ -36,6 +36,8 @@
     "license": "MIT",
     "dependencies": {
         "hoist-non-react-statics": "^3.3.2",
+        "leaflet": "^1.7.1",
+        "react-infinite-scroller": "^1.2.4",
         "recharts": "^2.0.8"
     }
 }

@@ -16,7 +16,8 @@
                  (rc/x-axis {:dataKey "time"
                              :height  60
                              :label   (:x-axis-label props)})
-                 (rc/y-axis {:unit (:unit-symbol props)}
+                 (rc/y-axis {:unit (:unit-symbol props)
+                             :domain ["auto" "auto"]}
                             (rc/label {:angle    -90
                                        :value    (:y-axis-label props)
                                        :position "insideLeft"
@@ -24,7 +25,7 @@
                  (rc/tooltip {})
                  ;(rc/legend {})
                  (rc/line {:type    "monotone"
-                           :dataKey "temperature"
+                           :dataKey (:data-key props)
                            :stroke  (:color props)})))
 
 (def ui-line-chart (comp/factory LineChart))
