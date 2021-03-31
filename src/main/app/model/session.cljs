@@ -171,6 +171,5 @@
       (js/console.log "Marking complete")
       (if valid?
         (comp/transact! app [(signup-success! params)])
-        (reset! state completed-state))
-      )))
+        (reset! state completed-state)))))
 
