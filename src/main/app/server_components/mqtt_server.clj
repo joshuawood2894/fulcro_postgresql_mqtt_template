@@ -30,8 +30,7 @@
         worker-type (get-in content ["worker" "type"])
         worker-uuid (get-in content ["worker" "uuid"])
         measurement (get-in content ["content" "value"])
-        sensor-id (get-in content ["content" "sensor-id"])
-        ]
+        sensor-id (get-in content ["content" "sensor-id"])]
     (do
       (db/execute!
         db/pool
@@ -65,7 +64,63 @@
                       :data-value measurement
                       :sensor-id  sensor-id}])))
       )
-    (log/info gateway-uuid)
+    (log/info "Data message received: " sensor-id)
+    gateway-uuid))
+
+(defn handle-gps-message [content]
+  (let [gateway-uuid (get-in content ["system" "uuid"])
+        type (get-in content ["system" "type"])
+        iccid (get-in content ["system" "iccid"])
+        battery (get-in content ["system" "battery"])
+        band (get-in content ["system" "band"])
+        rsrp (get-in content ["system" "rsrp"])
+        unix-time (get-timestamp content)
+        worker-type (get-in content ["worker" "type"])
+        worker-uuid (get-in content ["worker" "uuid"])
+        latitude (get-in content ["content" "latitude"])
+        longitude (get-in content ["content" "longitude"])
+        speed (get-in content ["content" "speed"])
+        heading (get-in content ["content" "heading"])
+        hdop (get-in content ["content" "hdop"])
+        nsv (get-in content ["content" "nsv"])]
+    (do
+      (db/execute!
+        db/pool
+        (-> (h/insert-into :gateway)
+          (h/values [{:id           (sql/call :cast gateway-uuid :uuid)
+                      :gateway-type type
+                      :iccid        iccid}])
+          (pgh/upsert (-> (pgh/on-conflict :id)
+                        (pgh/do-nothing)))))
+      (db/execute!
+        db/pool
+        (-> (h/insert-into :system-readings)
+          (h/values [{:gateway-id (sql/call :cast gateway-uuid :uuid)
+                      :battery    battery
+                      :band       band
+                      :rsrp       rsrp
+                      :unix-time  unix-time}])))
+      (db/execute!
+        db/pool
+        (-> (h/insert-into :workers)
+          (h/values [{:id          (sql/call :cast worker-uuid :uuid)
+                      :gateway-id  (sql/call :cast gateway-uuid :uuid)
+                      :worker-type worker-type}])
+          (pgh/upsert (-> (pgh/on-conflict :id)
+                        (pgh/do-nothing)))))
+      (db/execute!
+        db/pool
+        (-> (h/insert-into :gps-readings)
+          (h/values [{:worker-id  (sql/call :cast worker-uuid :uuid)
+                      :unix-time  unix-time
+                      :latitude latitude
+                      :longitude  longitude
+                      :speed speed
+                      :heading heading
+                      :hdop hdop
+                      :nsv nsv}])))
+      )
+    (log/info "GPS message received: lat(" latitude ") lon(" longitude ")")
     gateway-uuid))
 
 (defn handle-json
@@ -81,7 +136,7 @@
       (log/info "JSON message received over MQTT!")
       (cond
         (= msg-type "data") (handle-data-message data)
-        (= msg-type "gps") (log/info "gps message received")))))
+        (= msg-type "gps") (handle-gps-message data)))))
 
 (defn mqtt-start []
   (log/info "Starting MQTT Server")
