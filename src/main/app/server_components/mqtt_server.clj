@@ -62,8 +62,7 @@
           (h/values [{:worker-id  (sql/call :cast worker-uuid :uuid)
                       :unix-time  unix-time
                       :data-value measurement
-                      :sensor-id  sensor-id}])))
-      )
+                      :sensor-id  sensor-id}]))))
     (log/info "Data message received: " sensor-id)
     gateway-uuid))
 
@@ -111,15 +110,14 @@
       (db/execute!
         db/pool
         (-> (h/insert-into :gps-readings)
-          (h/values [{:worker-id  (sql/call :cast worker-uuid :uuid)
-                      :unix-time  unix-time
-                      :latitude latitude
-                      :longitude  longitude
-                      :speed speed
-                      :heading heading
-                      :hdop hdop
-                      :nsv nsv}])))
-      )
+          (h/values [{:worker-id (sql/call :cast worker-uuid :uuid)
+                      :unix-time unix-time
+                      :latitude  latitude
+                      :longitude longitude
+                      :speed     speed
+                      :heading   heading
+                      :hdop      hdop
+                      :nsv       nsv}]))))
     (log/info "GPS message received: lat(" latitude ") lon(" longitude ")")
     gateway-uuid))
 

@@ -1,9 +1,10 @@
 (ns app.ui.dashboard
   (:require
     ["react-grid-layout" :refer [Responsive]]
+    [app.application :refer [SPA]]
+    [app.model.dashboard :as mdb]
     [app.ui.recharts.line-chart :as lc]
     [app.ui.recharts.area-chart :as ac]
-    [app.ui.antd.date-picker :as dp]
     [app.ui.antd.components :as ant]
     [app.ui.data-logger :as dl]
     [app.ui.leaflet.leaflet :as lf]
@@ -25,21 +26,35 @@
                                            :data-key     "temperature"
                                            :color        ant/blue-primary})
 
-             :actions   [(dp/ui-range-picker {:key "setting"})]}))
+             :actions   [(ant/space {:direction "vertical" :size 12}
+                           (ant/range-picker {:showTime true
+                                              :format   "MM/DD/YYYY, h:mm:ss A"
+                                              :size     "default"
+                                              :bordered false
+                                              :onOk     (fn [date]
+                                                          (when (and (not= nil (nth (js->clj date) 0))
+                                                                  (not= nil (nth (js->clj date) 1)))
+                                                            (comp/transact! SPA
+                                                              [(mdb/set-temperature-start-end-datetime!
+                                                                 {:start (js/Date. (nth (js->clj date) 0))
+                                                                  :end   (js/Date. (nth (js->clj date) 1))})])))}))]}))
 
 (def ui-temperature-chart (comp/factory TemperatureChart))
 
-(defsc TemperatureData [this {:temperature-data/keys [id temperature] :as props}]
-  {:query         [:temperature-data/id {:temperature-data/temperature (comp/get-query dl/TemperatureReading)}]
-   :ident          :temperature-data/id
-   :initial-state {:temperature-data/id 1
-                   :temperature-data/temperature [{:id 1 :time 1 :temperature 20}
-                                                  {:id 2 :time 2 :temperature 21}
-                                                  {:id 3 :time 3 :temperature 22}
-                                                  {:id 4 :time 4 :temperature 20}
-                                                  {:id 5 :time 5 :temperature 19}
-                                                  {:id 6 :time 6 :temperature 20}
-                                                  {:id 7 :time 7 :temperature 23}]}}
+(defsc TemperatureData [this {:temperature-data/keys [id temperature start-date end-date] :as props}]
+  {:query         [:temperature-data/id {:temperature-data/temperature (comp/get-query dl/TemperatureReading)}
+                   :temperature-data/start-date :temperature-data/end-date]
+   :ident         :temperature-data/id
+   :initial-state {:temperature-data/id          1
+                   :temperature-data/start-date (js/Date.)
+                   :temperature-data/end-date   (js/Date. (.setHours (js/Date.) (- (.getHours (js/Date.)) 24)))
+                   :temperature-data/temperature [{:id 1 :time (js/Date.) :temperature 20}
+                                                  {:id 2 :time (js/Date.) :temperature 21}
+                                                  {:id 3 :time (js/Date.) :temperature 22}
+                                                  {:id 4 :time (js/Date.) :temperature 20}
+                                                  {:id 5 :time (js/Date.) :temperature 19}
+                                                  {:id 6 :time (js/Date.) :temperature 20}
+                                                  {:id 7 :time (js/Date.) :temperature 23}]}}
   (div
     (ui-temperature-chart temperature)))
 
@@ -60,21 +75,35 @@
                                            :data-key     "humidity"
                                            :color        ant/blue-primary})
 
-             :actions   [(dp/ui-range-picker {:key "setting"})]}))
+             :actions   [(ant/space {:direction "vertical" :size 12}
+                           (ant/range-picker {:showTime true
+                                              :format   "MM/DD/YYYY, h:mm:ss A"
+                                              :size     "default"
+                                              :bordered false
+                                              :onOk     (fn [date]
+                                                          (when (and (not= nil (nth (js->clj date) 0))
+                                                                  (not= nil (nth (js->clj date) 1)))
+                                                            (comp/transact! SPA
+                                                              [(mdb/set-humidity-start-end-datetime!
+                                                                 {:start (js/Date. (nth (js->clj date) 0))
+                                                                  :end   (js/Date. (nth (js->clj date) 1))})])))}))]}))
 
 (def ui-humidity-chart (comp/factory HumidityChart))
 
-(defsc HumidityData [this {:humidity-data/keys [id humidity] :as props}]
-  {:query         [:humidity-data/id {:humidity-data/humidity (comp/get-query dl/HumidityReading)}]
-   :ident          :humidity-data/id
-   :initial-state  {:humidity-data/id 1
-                    :humidity-data/humidity [{:id 1 :time "1" :humidity 40}
-                                             {:id 2 :time "2" :humidity 44}
-                                             {:id 3 :time "3" :humidity 39}
-                                             {:id 4 :time "4" :humidity 40}
-                                             {:id 5 :time "5" :humidity 35}
-                                             {:id 6 :time "6" :humidity 40}
-                                             {:id 7 :time "7" :humidity 42}]}}
+(defsc HumidityData [this {:humidity-data/keys [id humidity start-date end-date] :as props}]
+  {:query         [:humidity-data/id {:humidity-data/humidity (comp/get-query dl/HumidityReading)}
+                   :humidity-data/start-date :humidity-data/end-date]
+   :ident         :humidity-data/id
+   :initial-state {:humidity-data/id       1
+                   :humidity-data/start-date (js/Date.)
+                   :humidity-data/end-date   (js/Date. (.setHours (js/Date.) (- (.getHours (js/Date.)) 24)))
+                   :humidity-data/humidity [{:id 1 :time "1" :humidity 40}
+                                            {:id 2 :time "2" :humidity 44}
+                                            {:id 3 :time "3" :humidity 39}
+                                            {:id 4 :time "4" :humidity 40}
+                                            {:id 5 :time "5" :humidity 35}
+                                            {:id 6 :time "6" :humidity 40}
+                                            {:id 7 :time "7" :humidity 42}]}}
   (div
     (ui-humidity-chart humidity)))
 
@@ -92,24 +121,38 @@
                                            :x-axis-label "Time"
                                            :y-axis-label "Pressure (hPa)"
                                            :unit-symbol  ""
-                                           :data-key      "pressure"
+                                           :data-key     "pressure"
                                            :color        ant/blue-primary})
 
-             :actions   [(dp/ui-range-picker {:key "setting"})]}))
+             :actions   [(ant/space {:direction "vertical" :size 12}
+                           (ant/range-picker {:showTime true
+                                              :format   "MM/DD/YYYY, h:mm:ss A"
+                                              :size     "default"
+                                              :bordered false
+                                              :onOk     (fn [date]
+                                                          (when (and (not= nil (nth (js->clj date) 0))
+                                                                  (not= nil (nth (js->clj date) 1)))
+                                                            (comp/transact! SPA
+                                                              [(mdb/set-pressure-start-end-datetime!
+                                                                 {:start (js/Date. (nth (js->clj date) 0))
+                                                                  :end   (js/Date. (nth (js->clj date) 1))})])))}))]}))
 
 (def ui-pressure-chart (comp/factory PressureChart))
 
-(defsc PressureData [this {:pressure-data/keys [id pressure] :as props}]
-  {:query         [:pressure-data/id {:pressure-data/pressure (comp/get-query dl/PressureReading)}]
-   :ident          :pressure-data/id
-   :initial-state  {:pressure-data/id 1
-                    :pressure-data/pressure [{:id 1 :time "1" :pressure 999}
-                                             {:id 2 :time "2" :pressure 1000}
-                                             {:id 3 :time "3" :pressure 998}
-                                             {:id 4 :time "4" :pressure 1001}
-                                             {:id 5 :time "5" :pressure 1001}
-                                             {:id 6 :time "6" :pressure 998}
-                                             {:id 7 :time "7" :pressure 999}]}}
+(defsc PressureData [this {:pressure-data/keys [id pressure start-date end-date] :as props}]
+  {:query         [:pressure-data/id {:pressure-data/pressure (comp/get-query dl/PressureReading)}
+                   :pressure-data/start-date :pressure-data/end-date]
+   :ident         :pressure-data/id
+   :initial-state {:pressure-data/id         1
+                   :pressure-data/start-date (js/Date.)
+                   :pressure-data/end-date   (js/Date. (.setHours (js/Date.) (- (.getHours (js/Date.)) 24)))
+                   :pressure-data/pressure   [{:id 1 :time "1" :pressure 999}
+                                              {:id 2 :time "2" :pressure 1000}
+                                              {:id 3 :time "3" :pressure 998}
+                                              {:id 4 :time "4" :pressure 1001}
+                                              {:id 5 :time "5" :pressure 1001}
+                                              {:id 6 :time "6" :pressure 998}
+                                              {:id 7 :time "7" :pressure 999}]}}
   (div
     (ui-pressure-chart pressure)))
 
@@ -120,15 +163,15 @@
                    {:charts/temperature (comp/get-query TemperatureData)}
                    {:charts/pressure (comp/get-query PressureData)}]
    :ident         (fn [_ _] [:component/id ::charts])
-   :initial-state {:charts/humidity     {}
-                   :charts/temperature  {}
-                   :charts/pressure     {}}}
+   :initial-state {:charts/humidity    {}
+                   :charts/temperature {}
+                   :charts/pressure    {}}}
   (div
     (lf/ui-gps-map)
     (ant/row {}
-     (ant/col {} (ui-humidity-data humidity))
-     (ant/col {} (ui-temperature-data temperature))
-     (ant/col {} (ui-pressure-data pressure)))))
+      (ant/col {} (ui-humidity-data humidity))
+      (ant/col {} (ui-temperature-data temperature))
+      (ant/col {} (ui-pressure-data pressure)))))
 
 (def ui-charts (comp/factory Charts))
 

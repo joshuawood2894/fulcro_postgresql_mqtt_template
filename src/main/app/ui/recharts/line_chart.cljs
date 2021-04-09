@@ -14,6 +14,7 @@
                            :bottom -10}}
                  (rc/cartesian-grid {:strokeDasharray "10 10"})
                  (rc/x-axis {:dataKey "time"
+                             :tickFormatter (fn [timeStr] (js/console.log timeStr))
                              :height  60
                              :label   (:x-axis-label props)})
                  (rc/y-axis {:unit (:unit-symbol props)

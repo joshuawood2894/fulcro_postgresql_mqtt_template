@@ -166,8 +166,7 @@
           form (get-in completed-state ident)
           Signup (comp/registry-key->class :app.ui.auth/Signup)
           signup-props (fdn/db->tree (comp/get-query Signup) form completed-state)
-          valid? (= :valid (signup-validator signup-props))
-          ]
+          valid? (= :valid (signup-validator signup-props))]
       (js/console.log "Marking complete")
       (if valid?
         (comp/transact! app [(signup-success! params)])
