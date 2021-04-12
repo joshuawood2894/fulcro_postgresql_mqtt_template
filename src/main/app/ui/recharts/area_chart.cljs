@@ -39,8 +39,8 @@
                  :allowEscapeViewBox {:x false :y false}})
     (rc/area {:type        "monotone"
               :dataKey     (:data-key props)
-              :stroke      (u/darken-color (str (:color props)) 0.7)
-              :strokeWidth 2
+              :stroke      (u/darken-color (str (:color props)) 0.5)
+              :strokeWidth 1.5
               :fill        (str "url(#" (:id props) ")")
               :fillOpacity 1})))
 
