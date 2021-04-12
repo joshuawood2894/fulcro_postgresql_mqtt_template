@@ -21,7 +21,7 @@
     (ant/col {:span 15})
     (ant/col {:span 3} (ant/switch
                          {:style    {:background
-                                     color}
+                                     (if toggle-settings color nil)}
                           :unCheckedChildren
                                     (ant/caret-down)
                           :checkedChildren
