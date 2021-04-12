@@ -20,9 +20,7 @@
     (ant/col {:span 6} (div title))
     (ant/col {:span 15})
     (ant/col {:span 3} (ant/switch
-                         {:style    {:background
-                                     (if toggle-settings color nil)}
-                          :unCheckedChildren
+                         {:unCheckedChildren
                                     (ant/caret-down)
                           :checkedChildren
                                     (ant/caret-up)
@@ -79,7 +77,8 @@
                                            :unit-symbol  (char 176)
                                            :data-key     "temperature"
                                            :color        (:color props)})
-             :actions   (create-dropdown-settings (:toggle-settings props)
+             :actions
+                        (create-dropdown-settings (:toggle-settings props)
                           mdb/set-temperature-start-end-datetime!
                           mdb/set-temperature-color!)}))
 
@@ -149,7 +148,6 @@
                                            :data-key     "humidity"
                                            :id           "humidity-id"
                                            :color        (:color props)})
-
              :actions   (create-dropdown-settings (:toggle-settings props)
                           mdb/set-humidity-start-end-datetime!
                           mdb/set-humidity-color!)}))

@@ -18,16 +18,15 @@
       (linearGradient {:id (:id props) :x1 "0" :y1 "0" :x2 "0" :y2 "1"}
         (stop {:offset "40%" :stopColor (:color props) :stopOpacity 0.8})
         (stop {:offset "100%" :stopColor (:color props) :stopOpacity 0.1})))
-    (rc/cartesian-grid {:strokeDasharray "5 5"})
+    (rc/cartesian-grid {:strokeDasharray "3 3"})
     (rc/x-axis {:dataKey       "time"
-                :stroke        "black"
+                :minTickGap 20
                 ;:label   (:x-axis-label props)
                 :tickFormatter (fn [timeStr] (u/format-date
                                                timeStr))
                 :height        60
                 :tickMargin    10})
     (rc/y-axis {:unit   (:unit-symbol props)
-                :stroke "black"
                 :domain [min max]}
       (rc/label {:angle    -90
                  :value    (:y-axis-label props)
@@ -39,7 +38,7 @@
                  :allowEscapeViewBox {:x false :y false}})
     (rc/area {:type        "monotone"
               :dataKey     (:data-key props)
-              :stroke      (u/darken-color (str (:color props)) 0.5)
+              :stroke      (u/darken-color (str (:color props)) 0.7)
               :strokeWidth 1.5
               :fill        (str "url(#" (:id props) ")")
               :fillOpacity 1})))

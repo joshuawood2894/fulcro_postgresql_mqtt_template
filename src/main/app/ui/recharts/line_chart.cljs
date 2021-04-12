@@ -15,15 +15,14 @@
                            :bottom -15}}
     (rc/cartesian-grid {:strokeDasharray "5 5"})
     (rc/x-axis {:dataKey       "time"
-                :stroke        "black"
+                :minTickGap 10
                 :tickFormatter (fn [timeStr] (u/format-date
                                                timeStr))
                 :height        60
                 ;:label   (:x-axis-label props)
                 :tickMargin    10})
     (rc/y-axis {:unit   (:unit-symbol props)
-                :domain ["auto" "auto"]
-                :stroke "black"}
+                :domain ["auto" "auto"]}
       (rc/label {:angle    -90
                  :value    (:y-axis-label props)
                  :position "insideLeft"
