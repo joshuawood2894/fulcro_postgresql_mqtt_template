@@ -7,7 +7,12 @@
     [taoensso.timbre :as log]))
 
 (defn push-handler [{:keys [topic msg] :as data}]
-  (print "push handler received!:" (str (js->clj msg))))
+  ;(print "push handler received!:" (first (js->clj msg)))
+  ;(log/info "into" (into {} (js->clj msg)))
+  ;(log/info "orig" (array-map (js->clj msg)))
+  ;(log/info "huh?" (get-in ["system" "uuid"] msg))
+  (log/info "test" msg)
+  )
 
 (def secured-request-middleware
   ;; The CSRF token is embedded via server_components/html.clj

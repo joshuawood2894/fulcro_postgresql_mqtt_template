@@ -9,7 +9,8 @@
                     Switch]]
     ["@ant-design/icons" :refer [UserOutlined LockOutlined LineChartOutlined
                                  HomeOutlined SettingOutlined
-                                 CaretDownOutlined CaretUpOutlined]]
+                                 CaretDownOutlined CaretUpOutlined
+                                 CheckOutlined RedoOutlined]]
     ["@ant-design/colors" :refer [blue.primary]]
     [com.fulcrologic.fulcro.algorithms.react-interop :as interop]))
 
@@ -43,6 +44,8 @@
 (def setting-outlined (interop/react-factory SettingOutlined))
 (def caret-down (interop/react-factory CaretDownOutlined))
 (def caret-up (interop/react-factory CaretUpOutlined))
+(def check-outlined (interop/react-factory CheckOutlined))
+(def redo-outlined (interop/react-factory RedoOutlined))
 (def layout-header (interop/react-factory Layout.Header))
 (def layout-content (interop/react-factory Layout.Content))
 (def layout-footer (interop/react-factory Layout.Footer))

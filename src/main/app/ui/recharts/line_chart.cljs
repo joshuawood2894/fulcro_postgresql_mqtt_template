@@ -22,7 +22,7 @@
                 ;:label   (:x-axis-label props)
                 :tickMargin    10})
     (rc/y-axis {:unit   (:unit-symbol props)
-                :domain ["auto" "auto"]}
+                :domain [(:min-bound props) (:max-bound props)]}
       (rc/label {:angle    -90
                  :value    (:y-axis-label props)
                  :position "insideLeft"
