@@ -2,7 +2,12 @@
   (:require
     [com.fulcrologic.fulcro.networking.http-remote :as net]
     [com.fulcrologic.fulcro.application :as app]
-    [com.fulcrologic.fulcro.components :as comp]))
+    [com.fulcrologic.fulcro.components :as comp]
+    [com.fulcrologic.fulcro.networking.websockets :as fws]
+    [taoensso.timbre :as log]))
+
+(defn push-handler [{:keys [topic msg] :as data}]
+  (print "push handler received!:" (str (js->clj msg))))
 
 (def secured-request-middleware
   ;; The CSRF token is embedded via server_components/html.clj
@@ -15,7 +20,9 @@
                 ;; See middleware.clj to see how the token is embedded into the HTML
                 :remotes {:remote (net/fulcro-http-remote
                                     {:url                "/api"
-                                     :request-middleware secured-request-middleware})}}))
+                                     :request-middleware secured-request-middleware})
+                          :ws-remote (fws/fulcro-websocket-remote
+                                       {:push-handler push-handler})}}))
 
 (comment
   (-> SPA (::app/runtime-atom) deref ::app/indexes))

@@ -10,7 +10,8 @@
     [ring.util.response :refer [response file-response resource-response]]
     [ring.util.response :as resp]
     [hiccup.page :refer [html5]]
-    [taoensso.timbre :as log]))
+    [taoensso.timbre :as log]
+    [app.server-components.websockets :refer [wrap-websockets]]))
 
 (def ^:private not-found-handler
   (fn [req]
@@ -91,6 +92,7 @@
         legal-origins   (get config :legal-origins #{"localhost"})]
     (-> not-found-handler
       (wrap-api "/api")
+      (wrap-websockets)
       wrap-transit-params
       wrap-transit-response
       (wrap-html-routes)

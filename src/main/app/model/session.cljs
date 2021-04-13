@@ -155,7 +155,7 @@
 (defmutation signup-success! [{:keys [email password] :as params}]
   (action [{:keys [app state]}]
     (js/console.log "signup-success!: " email))
-  (remote [env] true)
+  (ws-remote [env] true)
   (ok-action [{:keys [app state]}]
     (dr/change-route app ["signup-success"])))
 

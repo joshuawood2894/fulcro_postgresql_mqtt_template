@@ -10,7 +10,9 @@
     [honeysql.helpers :as h]
     [honeysql-postgres.helpers :as pgh]
     [clj-time.coerce :as clj-time]
-    [clojure.string :as s]))
+    [clojure.string :as s]
+    [com.fulcrologic.fulcro.networking.websocket-protocols :refer [push]]
+    [app.server-components.websockets :refer [websockets]]))
 
 (defn get-timestamp [content]
   (-> (get-in content ["system" "unix-time"])
@@ -134,7 +136,11 @@
       (log/info "JSON message received over MQTT!")
       (cond
         (= msg-type "data") (handle-data-message data)
-        (= msg-type "gps") (handle-gps-message data)))))
+        (= msg-type "gps") (handle-gps-message data))
+      (let [client-uid (-> @(:connected-uids websockets)
+                         :any
+                         first)]
+        (push websockets client-uid :topic-data data)))))
 
 (defn mqtt-start []
   (log/info "Starting MQTT Server")
