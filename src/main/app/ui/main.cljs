@@ -5,8 +5,7 @@
     [taoensso.timbre :as log]
     [app.ui.recharts.area-chart :as ac]
     [app.ui.recharts.line-chart :as lc]
-    [app.ui.antd.components :as ant]
-    [app.ui.antd.date-picker :as dp]))
+    [app.ui.antd.components :as ant]))
 
 
 (defsc Main [this props]

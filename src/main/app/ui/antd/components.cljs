@@ -5,9 +5,13 @@
                     Menu.Item Menu.ItemGroup Dropdown Space Divider Layout
                     Layout.Header Layout.Content Breadcrumb Breadcrumb.Item
                     Layout.Footer Layout.Sider Menu.SubMenu DatePicker
-                    DatePicker.RangePicker Card.Meta message List List.Item]]
+                    DatePicker.RangePicker Card.Meta message List List.Item
+                    Switch Radio Radio.Group]]
     ["@ant-design/icons" :refer [UserOutlined LockOutlined LineChartOutlined
-                                 HomeOutlined SettingOutlined]]
+                                 BarChartOutlined DotChartOutlined AreaChartOutlined
+                                 HomeOutlined SettingOutlined
+                                 CaretDownOutlined CaretUpOutlined
+                                 CheckOutlined RedoOutlined]]
     ["@ant-design/colors" :refer [blue.primary]]
     [com.fulcrologic.fulcro.algorithms.react-interop :as interop]))
 
@@ -37,8 +41,15 @@
 (def breadcrumb (interop/react-factory Breadcrumb))
 (def breadcrumb-item (interop/react-factory Breadcrumb.Item))
 (def line-chart-outlined (interop/react-factory LineChartOutlined))
+(def area-chart-outlined (interop/react-factory AreaChartOutlined))
+(def bar-chart-outlined (interop/react-factory BarChartOutlined))
+(def dot-chart-outlined (interop/react-factory DotChartOutlined))
 (def home-outlined (interop/react-factory HomeOutlined))
 (def setting-outlined (interop/react-factory SettingOutlined))
+(def caret-down (interop/react-factory CaretDownOutlined))
+(def caret-up (interop/react-factory CaretUpOutlined))
+(def check-outlined (interop/react-factory CheckOutlined))
+(def redo-outlined (interop/react-factory RedoOutlined))
 (def layout-header (interop/react-factory Layout.Header))
 (def layout-content (interop/react-factory Layout.Content))
 (def layout-footer (interop/react-factory Layout.Footer))
@@ -49,6 +60,9 @@
 (def card-meta (interop/react-factory Card.Meta))
 (def list-ant (interop/react-factory List))
 (def list-item-ant (interop/react-factory List.Item))
+(def switch (interop/react-factory Switch))
+(def radio (interop/react-factory Radio))
+(def radio-group (interop/react-factory Radio.Group))
 
 (def blue-primary blue.primary)
 (def msg message)

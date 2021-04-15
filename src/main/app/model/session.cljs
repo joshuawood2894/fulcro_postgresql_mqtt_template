@@ -155,7 +155,7 @@
 (defmutation signup-success! [{:keys [email password] :as params}]
   (action [{:keys [app state]}]
     (js/console.log "signup-success!: " email))
-  (remote [env] true)
+  (ws-remote [env] true)
   (ok-action [{:keys [app state]}]
     (dr/change-route app ["signup-success"])))
 
@@ -166,8 +166,7 @@
           form (get-in completed-state ident)
           Signup (comp/registry-key->class :app.ui.auth/Signup)
           signup-props (fdn/db->tree (comp/get-query Signup) form completed-state)
-          valid? (= :valid (signup-validator signup-props))
-          ]
+          valid? (= :valid (signup-validator signup-props))]
       (js/console.log "Marking complete")
       (if valid?
         (comp/transact! app [(signup-success! params)])
