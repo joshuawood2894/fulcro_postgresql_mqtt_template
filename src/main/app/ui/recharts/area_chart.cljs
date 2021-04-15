@@ -27,7 +27,7 @@
                 :height        60
                 :tickMargin    10})
     (rc/y-axis {:unit   (:unit-symbol props)
-                :domain [min max]}
+                :domain [(:min-bound props) (:max-bound props)]}
       (rc/label {:angle    -90
                  :value    (:y-axis-label props)
                  :position "insideLeft"

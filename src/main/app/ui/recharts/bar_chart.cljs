@@ -1,21 +1,21 @@
-(ns app.ui.recharts.line-chart
+(ns app.ui.recharts.bar-chart
   (:require
     [app.ui.recharts.components :as rc]
     [app.ui.recharts.util :as u]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li h3]]))
 
-(defsc LineChart [this props]
-  (rc/line-chart {:width  485
-                  :height 275
-                  :data   (:data props)
-                  :margin {:top    20
-                           :right  35
-                           :left   30
-                           :bottom -15}}
+(defsc BarChart [this props]
+  (rc/bar-chart {:width  485
+                     :height 275
+                     :data   (:data props)
+                     :margin {:top    20
+                              :right  35
+                              :left   30
+                              :bottom -15}}
     (rc/cartesian-grid {:strokeDasharray "5 5"})
     (rc/x-axis {:dataKey       "time"
-                :minTickGap 10
+                :minTickGap    10
                 :tickFormatter (fn [timeStr] (u/format-date
                                                timeStr))
                 :height        60
@@ -32,9 +32,7 @@
                  :offset             20
                  :allowEscapeViewBox {:x false :y false}})
     ;(rc/legend {})
-    (rc/line {:type    "monotone"
-              :dataKey (:data-key props)
-              :stroke  (:color props)
-              :strokeWidth 2})))
+    (rc/bar {:dataKey (:data-key props)
+                 :fill    (:color props)})))
 
-(def ui-line-chart (comp/factory LineChart))
+(def ui-bar-chart (comp/factory BarChart))

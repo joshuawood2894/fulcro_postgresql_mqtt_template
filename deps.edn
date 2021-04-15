@@ -36,7 +36,10 @@
 
            ;; Authentication
            buddy/buddy-sign                    {:mvn/version "3.3.0"}
-           buddy/buddy-hashers                 {:mvn/version "1.7.0"}}
+           buddy/buddy-hashers                 {:mvn/version "1.7.0"}
+
+           ;; Fulcro Websockets
+           com.fulcrologic/fulcro-websockets   {:mvn/version "3.3.0"}}
 
  :aliases {:clj-tests {:extra-paths ["src/test"]
                        :main-opts   ["-m" "kaocha.runner"]
