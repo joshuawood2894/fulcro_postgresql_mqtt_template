@@ -6,7 +6,6 @@
     [taoensso.timbre :as log]
     ["react-infinite-scroller" :refer [InfiniteScroll]]
     [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
-    [app.application :refer [SPA]]
     [com.fulcrologic.fulcro.algorithms.merge :as merge]))
 
 (def infinite-scroller (interop/react-factory InfiniteScroll))
@@ -59,15 +58,3 @@
       (map ui-temperature-reading (:temperature-data/temperature temperature))
       (map ui-humidity-reading (:humidity-data/humidity humidity)))))
 
-(comment
-  (merge/merge-component! SPA HumidityReading {:humidity-reading/id       16
-                                               :humidity-reading/time     (js/Date.)
-                                               :humidity-reading/humidity 42}
-    :append [:humidity-data/id 1 :humidity-data/humidity])
-
-  (for [x (vec (range 8 101))]
-    (merge/merge-component! SPA HumidityReading {:humidity-reading/id       x
-                                                 :humidity-reading/time     (js/Date.)
-                                                 :humidity-reading/humidity (+ (rand-nth (vec (range -3 4))) 40)}
-      :append [:humidity-data/id 1 :humidity-data/humidity]))
-  )
