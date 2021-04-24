@@ -4,8 +4,8 @@
     [app.ui.main :as main]
     [app.ui.session :as session]
     [app.ui.settings :as settings]
-    [app.ui.dashboard :as dashboard]
-    [app.ui.data-logger :as datal]
+    [app.ui.dashboard.root :as dashboard]
+    [app.ui.data-logger.root :as datal]
     [app.ui.mqtt-logger :as mqttl]
     [app.ui.antd.components :as ant]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li p h3 button b hr]]
@@ -14,7 +14,6 @@
     [com.fulcrologic.fulcro.ui-state-machines :as uism :refer [defstatemachine]]
     [com.fulcrologic.fulcro.algorithms.react-interop :as interop]
     [taoensso.timbre :as log]))
-
 
 (dr/defrouter TopRouter [this props]
   {:router-targets [main/Main auth/SignupSuccess settings/Settings

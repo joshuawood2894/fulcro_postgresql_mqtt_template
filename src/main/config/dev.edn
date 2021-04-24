@@ -2,19 +2,21 @@
  :database-spec
  {:username      "wasp"
   :password      "wasp"
-  :server-name   "192.168.1.209"
-  :port-number   5432
+  :server-name   "localhost"
+  :port-number   5433
   :database-name "wasp"
   ;:sslmode       "disable"
   }
  :mqtt-spec
  {:mqtt-url "amqps://htqaddpo:xrt7DgYey64jCHL-8RTTX5kgMHAt_H9M@orangutan.rmq.cloudamqp.com/htqaddpo"
-  :username "ghuxvsvh:ghuxvsvh"
+  ;:username "ghuxvsvh:ghuxvsvh"
+
   ;:username "odnga"
-  ;:username "cudip"
+  :username "cudip"
+
   ;:password "edxltae"
-  ;:password "pitneta"
-  :password "xdOYzLPpO08FlpnzwPw4gOI9kWDG1hxA"
-  ;:hostname "tcp://mqtt.pcdworks.com:1883"
-  :hostname "tcp://shark.rmq.cloudamqp.com:1883"
+  :password "pitneta"
+  ;:password "xdOYzLPpO08FlpnzwPw4gOI9kWDG1hxA"
+  :hostname "tcp://mqtt.pcdworks.com:1883"
+  ;:hostname "tcp://shark.rmq.cloudamqp.com:1883"
   :qos 0}}
