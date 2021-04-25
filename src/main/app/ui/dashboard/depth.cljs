@@ -17,16 +17,19 @@
                          :color           "white"}
              :title     (dc/create-card-title "Water Depth in Centimeters"
                           md/toggle-depth-settings! (:toggle-settings props))
-             :cover     (dc/create-rechart (:chart-type props)
-                          {:data         (:depth props)
-                           :x-axis-label "Time"
-                           :y-axis-label "Depth in Centimeters"
-                           :unit-symbol  "cm"
-                           :data-key     "depth"
-                           :id           "depth-id"
-                           :color        (:color props)
-                           :min-bound    (:min-bound props)
-                           :max-bound    (:max-bound props)})
+             :cover     (if (empty? (:depth props))
+                          (div {:style {:width  485 :height 275}}
+                            (ant/ant-empty {:style {:paddingTop "15%"}}))
+                          (dc/create-rechart (:chart-type props)
+                           {:data         (:depth props)
+                            :x-axis-label "Time"
+                            :y-axis-label "Depth in Centimeters"
+                            :unit-symbol  "cm"
+                            :data-key     "depth"
+                            :id           "depth-id"
+                            :color        (:color props)
+                            :min-bound    (:min-bound props)
+                            :max-bound    (:max-bound props)}))
              :actions   (dc/create-dropdown-settings (:toggle-settings props)
                           md/set-depth-start-end-datetime!
                           md/set-depth-color!

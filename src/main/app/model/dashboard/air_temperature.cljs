@@ -1,7 +1,8 @@
 (ns app.model.dashboard.air-temperature
   (:require
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li h3 p]]
-    [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]))
+    [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
+    [app.ui.data-logger.air-temperature :as dlat]))
 
 (defmutation redo-air-temperature-min-max-bound! [{:keys [min max] :as params}]
   (action [{:keys [app state]}]

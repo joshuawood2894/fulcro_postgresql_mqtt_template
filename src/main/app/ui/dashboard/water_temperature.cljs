@@ -18,16 +18,19 @@
              :title     (dc/create-card-title "Water Temperature in Degrees
              Celsius"
                           mwt/toggle-water-temperature-settings! (:toggle-settings props))
-             :cover     (dc/create-rechart (:chart-type props)
-                          {:data         (:water-temperature props)
-                           :x-axis-label "Time"
-                           :y-axis-label "Water Temperature"
-                           :unit-symbol  (char 176)
-                           :data-key     "water-temperature"
-                           :id           "water-temperature-id"
-                           :color        (:color props)
-                           :min-bound    (:min-bound props)
-                           :max-bound    (:max-bound props)})
+             :cover     (if (empty? (:water-temperature props))
+                          (div {:style {:width  485 :height 275}}
+                            (ant/ant-empty {:style {:paddingTop "15%"}}))
+                          (dc/create-rechart (:chart-type props)
+                           {:data         (:water-temperature props)
+                            :x-axis-label "Time"
+                            :y-axis-label "Water Temperature"
+                            :unit-symbol  (char 176)
+                            :data-key     "water-temperature"
+                            :id           "water-temperature-id"
+                            :color        (:color props)
+                            :min-bound    (:min-bound props)
+                            :max-bound    (:max-bound props)}))
              :actions   (dc/create-dropdown-settings (:toggle-settings props)
                           mwt/set-water-temperature-start-end-datetime!
                           mwt/set-water-temperature-color!

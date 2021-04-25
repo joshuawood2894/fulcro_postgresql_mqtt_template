@@ -6,7 +6,7 @@
                     Layout.Header Layout.Content Breadcrumb Breadcrumb.Item
                     Layout.Footer Layout.Sider Menu.SubMenu DatePicker
                     DatePicker.RangePicker Card.Meta message List List.Item
-                    Switch Radio Radio.Group]]
+                    Empty Switch Radio Radio.Group]]
     ["@ant-design/icons" :refer [UserOutlined LockOutlined LineChartOutlined
                                  BarChartOutlined DotChartOutlined AreaChartOutlined
                                  HomeOutlined SettingOutlined
@@ -63,6 +63,7 @@
 (def switch (interop/react-factory Switch))
 (def radio (interop/react-factory Radio))
 (def radio-group (interop/react-factory Radio.Group))
+(def ant-empty (interop/react-factory Empty))
 
 (def blue-primary blue.primary)
 (def msg message)

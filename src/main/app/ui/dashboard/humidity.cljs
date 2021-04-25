@@ -17,16 +17,19 @@
                          :color           "white"}
              :title     (dc/create-card-title "Percent Humidity"
                           mh/toggle-humidity-settings! (:toggle-settings props))
-             :cover     (dc/create-rechart (:chart-type props)
-                          {:data         (:humidity props)
-                           :x-axis-label "Time"
-                           :y-axis-label "Percentage"
-                           :unit-symbol  "%"
-                           :data-key     "humidity"
-                           :id           "humidity-id"
-                           :color        (:color props)
-                           :min-bound    (:min-bound props)
-                           :max-bound    (:max-bound props)})
+             :cover     (if (empty? (:humidity props))
+                          (div {:style {:width  485 :height 275}}
+                            (ant/ant-empty {:style {:paddingTop "15%"}}))
+                          (dc/create-rechart (:chart-type props)
+                           {:data         (:humidity props)
+                            :x-axis-label "Time"
+                            :y-axis-label "Percentage"
+                            :unit-symbol  "%"
+                            :data-key     "humidity"
+                            :id           "humidity-id"
+                            :color        (:color props)
+                            :min-bound    (:min-bound props)
+                            :max-bound    (:max-bound props)}))
              :actions   (dc/create-dropdown-settings (:toggle-settings props)
                           mh/set-humidity-start-end-datetime!
                           mh/set-humidity-color!

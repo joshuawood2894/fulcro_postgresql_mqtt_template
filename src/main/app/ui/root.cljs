@@ -61,8 +61,7 @@
             (ant/menu-item {:key     "5"
                             :icon    (ant/setting-outlined)
                             :onClick (fn [] (dr/change-route this ["settings"]))}
-              "Settings"))
-          ))
+              "Settings"))))
       (ant/layout {:style {:background "#eee"}}
         (ant/layout-header {:style {:background   "#fff"
                                     :padding      "0"

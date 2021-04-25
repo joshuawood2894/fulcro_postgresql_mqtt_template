@@ -15,18 +15,21 @@
                          :padding "0px"}
              :headStyle {:backgroundColor "#001529"
                          :color           "white"}
-             :title     (dc/create-card-title "H2S in Parts per Million"
+             :title     (dc/create-card-title "Conductivity in Microseimens"
                           mc/toggle-conductivity-settings! (:toggle-settings props))
-             :cover     (dc/create-rechart (:chart-type props)
-                          {:data         (:conductivity props)
-                           :x-axis-label "Time"
-                           :y-axis-label "Conductivity in Microsiemens"
-                           :unit-symbol  "uS"
-                           :data-key     "conductivity"
-                           :id           "conductivity-id"
-                           :color        (:color props)
-                           :min-bound    (:min-bound props)
-                           :max-bound    (:max-bound props)})
+             :cover     (if (empty? (:conductivity props))
+                          (div {:style {:width  485 :height 275}}
+                            (ant/ant-empty {:style {:paddingTop "15%"}}))
+                          (dc/create-rechart (:chart-type props)
+                           {:data         (:conductivity props)
+                            :x-axis-label "Time"
+                            :y-axis-label "Conductivity in Microsiemens"
+                            :unit-symbol  "uS"
+                            :data-key     "conductivity"
+                            :id           "conductivity-id"
+                            :color        (:color props)
+                            :min-bound    (:min-bound props)
+                            :max-bound    (:max-bound props)}))
              :actions   (dc/create-dropdown-settings (:toggle-settings props)
                           mc/set-conductivity-start-end-datetime!
                           mc/set-conductivity-color!

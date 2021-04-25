@@ -17,16 +17,19 @@
                          :color           "white"}
              :title     (dc/create-card-title "Pressure in Hectopascals"
                           mp/toggle-pressure-settings! (:toggle-settings props))
-             :cover     (dc/create-rechart (:chart-type props)
-                          {:data         (:pressure props)
-                           :x-axis-label "Time"
-                           :y-axis-label "Pressure (hPa)"
-                           :unit-symbol  ""
-                           :data-key     "pressure"
-                           :id           "pressure-id"
-                           :color        (:color props)
-                           :min-bound    (:min-bound props)
-                           :max-bound    (:max-bound props)})
+             :cover     (if (empty? (:pressure props))
+                          (div {:style {:width  485 :height 275}}
+                            (ant/ant-empty {:style {:paddingTop "15%"}}))
+                          (dc/create-rechart (:chart-type props)
+                           {:data         (:pressure props)
+                            :x-axis-label "Time"
+                            :y-axis-label "Pressure (hPa)"
+                            :unit-symbol  ""
+                            :data-key     "pressure"
+                            :id           "pressure-id"
+                            :color        (:color props)
+                            :min-bound    (:min-bound props)
+                            :max-bound    (:max-bound props)}))
              :actions   (dc/create-dropdown-settings (:toggle-settings props)
                           mp/set-pressure-start-end-datetime!
                           mp/set-pressure-color!

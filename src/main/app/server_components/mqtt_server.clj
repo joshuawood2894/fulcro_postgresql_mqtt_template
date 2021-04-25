@@ -75,7 +75,7 @@
          id))
       (do
         (log/info "Invalid data message -- not propogated")
-        (log/info content)))))
+        nil))))
 
 (defn handle-gps-message [content]
   (let [gateway-uuid (get-in content ["system" "uuid"])
@@ -140,7 +140,7 @@
          id))
       (do
         (log/info "Invalid gps message -- not propogated")
-        (log/info content)))))
+        nil))))
 
 (defn handle-json
   [^String topic metadata ^bytes payload]
@@ -153,26 +153,20 @@
     (let [data (cheshire/parse-string (String. payload "UTF-8"))
           msg-type (data "msg-type")]
       (log/info "JSON message received over MQTT!")
-      ;(log/info data)
-      ;(handle-data-message data)
-
-      (cond
-        (= msg-type "data")
-        (handle-data-message data)
-        (= msg-type "gps")
-        (handle-gps-message data))
-
-      ;(let [client-uid (-> @(:connected-uids websockets)
-      ;                     :any
-      ;                     first)]
-      ;  (cond
-      ;    (= msg-type "data") (let [id (handle-data-message data)]
-      ;                          (push websockets client-uid :topic-data
-      ;                                (conj data {:id (:data-readings/id (into {} id))})))
-      ;    (= msg-type "gps") (let [id (handle-gps-message data)]
-      ;                         (push websockets client-uid :topic-data
-      ;                               (conj data {:id (:gps-readings/id (into {} id))})))))
-      )))
+      (let [client-uid (-> @(:connected-uids websockets)
+                           :any
+                           first)
+            no-connections (empty? client-uid)]
+        (if-not no-connections
+          (cond
+           (= msg-type "data") (let [id (handle-data-message data)]
+                                 (when (not= id nil)
+                                   (push websockets client-uid :topic-data
+                                     (conj data {:id (:data-readings/id (into {} id))}))))
+           (= msg-type "gps") (let [id (handle-gps-message data)]
+                                (when (not= id nil)
+                                  (push websockets client-uid :topic-data
+                                    (conj data {:id (:gps-readings/id (into {} id))}))))))))))
 
 (defn mqtt-start []
   (log/info "Starting MQTT Server")
@@ -188,8 +182,7 @@
                             :password       password
                             :auto-reconnect true}})]
     (mh/subscribe conn {"#" qos} handle-json)
-    conn)
-  )
+    conn))
 
 (defn mqtt-stop
   [conn]

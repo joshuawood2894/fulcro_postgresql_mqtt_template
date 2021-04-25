@@ -8,7 +8,11 @@
     [com.fulcrologic.fulcro.mutations :as m :refer [defmutation]]
     [com.fulcrologic.fulcro.algorithms.form-state :as fs]
     [com.fulcrologic.fulcro.algorithms.denormalize :as fdn]
-    [clojure.string :as str]))
+    [clojure.string :as str]
+
+    [com.fulcrologic.fulcro.application :as app]
+    [com.fulcrologic.fulcro.networking.websockets :as fws]
+    [app.model.push-handler :as ph]))
 
 (defn clear [env]
   (uism/assoc-aliased env :error ""))
@@ -50,7 +54,13 @@
 (defn process-session-result [env error-message]
   (let [success? (uism/alias-value env :session-valid?)]
     (when success?
-      (dr/change-route SPA ["main"]))
+      (do
+        (app/set-remote! SPA :ws-remote (fws/fulcro-websocket-remote
+                                          {:sente-options {:client-uuid
+                                                           (str (:user-id (uism/aliased-data env)))}
+                                           :push-handler   ph/push-handler
+                                           :state-callback ph/state-callback}))
+        (dr/change-route SPA ["main"])))
     (cond-> (clear env)
       success? (->
                  (uism/assoc-aliased :login-modal-open? false)

@@ -17,16 +17,19 @@
                          :color           "white"}
              :title     (dc/create-card-title "H2S in Parts per Million"
                           mah/toggle-air-h2s-settings! (:toggle-settings props))
-             :cover     (dc/create-rechart (:chart-type props)
-                          {:data         (:air-h2s props)
-                           :x-axis-label "Time"
-                           :y-axis-label "PPM"
-                           :unit-symbol  ""
-                           :data-key     "air-h2s"
-                           :id           "air-h2s-id"
-                           :color        (:color props)
-                           :min-bound    (:min-bound props)
-                           :max-bound    (:max-bound props)})
+             :cover     (if (empty? (:air-h2s props))
+                          (div {:style {:width  485 :height 275}}
+                            (ant/ant-empty {:style {:paddingTop "15%"}}))
+                          (dc/create-rechart (:chart-type props)
+                           {:data         (:air-h2s props)
+                            :x-axis-label "Time"
+                            :y-axis-label "PPM"
+                            :unit-symbol  ""
+                            :data-key     "air-h2s"
+                            :id           "air-h2s-id"
+                            :color        (:color props)
+                            :min-bound    (:min-bound props)
+                            :max-bound    (:max-bound props)}))
              :actions   (dc/create-dropdown-settings (:toggle-settings props)
                           mah/set-air-h2s-start-end-datetime!
                           mah/set-air-h2s-color!

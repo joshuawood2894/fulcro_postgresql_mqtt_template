@@ -17,16 +17,21 @@
                          :color           "white"}
              :title     (dc/create-card-title "PH"
                           mph/toggle-ph-settings! (:toggle-settings props))
-             :cover     (dc/create-rechart (:chart-type props)
-                          {:data         (:ph props)
-                           :x-axis-label "Time"
-                           :y-axis-label "PH"
-                           :unit-symbol  ""
-                           :data-key     "ph"
-                           :id           "ph-id"
-                           :color        (:color props)
-                           :min-bound    (:min-bound props)
-                           :max-bound    (:max-bound props)})
+             :cover     (if (empty? (:ph props))
+                          (div {:style {:width  485 :height 275}}
+                            (ant/ant-empty {:style {:paddingTop "15%"}}))
+                          (dc/create-rechart
+                                                   (:chart-type
+                                                                props)
+                           {:data         (:ph props)
+                            :x-axis-label "Time"
+                            :y-axis-label "PH"
+                            :unit-symbol  ""
+                            :data-key     "ph"
+                            :id           "ph-id"
+                            :color        (:color props)
+                            :min-bound    (:min-bound props)
+                            :max-bound    (:max-bound props)}))
              :actions   (dc/create-dropdown-settings (:toggle-settings props)
                           mph/set-ph-start-end-datetime!
                           mph/set-ph-color!
