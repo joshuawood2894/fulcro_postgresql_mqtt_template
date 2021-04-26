@@ -29,7 +29,8 @@
                :water-temperature-reading/time (js/Date. (* 1000 unix-time))
                :water-temperature-reading/water-temperature
                                                (get-in msg ["content" "value"])}
-              :append [:water-temperature-data/id 1 :water-temperature-data/water-temperature]))
+              :append [:component/id :water-temperature-data
+                       :water-temperature-data/water-temperature]))
           (= sensor-id "conductivity")
           (do
             (js/console.log "PUSH: " worker-type sensor-id)
@@ -38,7 +39,8 @@
                :conductivity-reading/time (js/Date. (* 1000 unix-time))
                :conductivity-reading/conductivity
                                           (get-in msg ["content" "value"])}
-              :append [:conductivity-data/id 1 :conductivity-data/conductivity]))
+              :append [:component/id :conductivity-data
+                       :conductivity-data/conductivity]))
           (= sensor-id "ph")
           (do
             (js/console.log "PUSH: " worker-type sensor-id)
@@ -47,7 +49,8 @@
                :ph-reading/time (js/Date. (* 1000 unix-time))
                :ph-reading/ph
                                 (get-in msg ["content" "value"])}
-              :append [:ph-data/id 1 :ph-data/ph]))))
+              :append [:component/id :ph-data
+                       :ph-data/ph]))))
       (and (= msg-type "data") (= worker-type "environmental"))
       (let [sensor-id (get-in msg ["content" "sensor-id"])]
         (cond
@@ -59,7 +62,8 @@
                :air-temperature-reading/time (js/Date. (* 1000 unix-time))
                :air-temperature-reading/air-temperature
                                              (get-in msg ["content" "value"])}
-              :append [:air-temperature-data/id 1 :air-temperature-data/air-temperature]))
+              :append [:component/id :air-temperature-data
+                       :air-temperature-data/air-temperature]))
           (= sensor-id "humidity")
           (do
             (js/console.log "PUSH: " worker-type sensor-id)
@@ -67,7 +71,8 @@
               {:humidity-reading/id       id
                :humidity-reading/time     (js/Date. (* 1000 unix-time))
                :humidity-reading/humidity (get-in msg ["content" "value"])}
-              :append [:humidity-data/id 1 :humidity-data/humidity]))
+              :append [:component/id :humidity-data
+                       :humidity-data/humidity]))
           (= sensor-id "pressure")
           (do
             (js/console.log "PUSH: " worker-type sensor-id)
@@ -75,7 +80,8 @@
               {:pressure-reading/id       id
                :pressure-reading/time     (js/Date. (* 1000 unix-time))
                :pressure-reading/pressure (get-in msg ["content" "value"])}
-              :append [:pressure-data/id 1 :pressure-data/pressure]))
+              :append [:component/id :pressure-data
+                       :pressure-data/pressure]))
           (= sensor-id "air-h2s")
           (do
             (js/console.log "PUSH: " worker-type sensor-id)
@@ -83,7 +89,8 @@
               {:air-h2s-reading/id      id
                :air-h2s-reading/time    (js/Date. (* 1000 unix-time))
                :air-h2s-reading/air-h2s (get-in msg ["content" "value"])}
-              :append [:air-h2s-data/id 1 :air-h2s-data/air-h2s]))))
+              :append [:component/id :air-h2s-data
+                       :air-h2s-data/air-h2s]))))
       (and (= msg-type "data") (= worker-type "controller"))
       (let [sensor-id (get-in msg ["content" "sensor-id"])]
         (cond
@@ -94,7 +101,8 @@
               {:depth-reading/id      id
                :depth-reading/time    (js/Date. (* 1000 unix-time))
                :depth-reading/depth (get-in msg ["content" "value"])}
-              :append [:depth-data/id 1 :depth-data/depth])))))))
+              :append [:component/id :depth-data
+                       :depth-data/depth])))))))
 
 (defn state-callback [before after]
   (log/info "before: " before "after: " after))

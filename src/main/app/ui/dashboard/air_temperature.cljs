@@ -42,20 +42,19 @@
 
 (def ui-air-temperature-chart (comp/factory AirTemperatureChart))
 
-(defsc AirTemperatureData [this {:air-temperature-data/keys [id air-temperature
+(defsc AirTemperatureData [this {:air-temperature-data/keys [air-temperature
                                                              start-date end-date
                                                              toggle-settings color
                                                              min-bound max-bound
                                                              chart-type]
                                  :as                        props}]
-  {:query         [:air-temperature-data/id {:air-temperature-data/air-temperature (comp/get-query dl/AirTemperatureReading)}
+  {:query         [{:air-temperature-data/air-temperature (comp/get-query dl/AirTemperatureReading)}
                    :air-temperature-data/start-date :air-temperature-data/end-date
                    :air-temperature-data/toggle-settings :air-temperature-data/color
                    :air-temperature-data/min-bound :air-temperature-data/max-bound
                    :air-temperature-data/chart-type]
-   :ident         :air-temperature-data/id
-   :initial-state {:air-temperature-data/id              1
-                   :air-temperature-data/toggle-settings false
+   :ident         (fn [] [:component/id :air-temperature-data])
+   :initial-state {:air-temperature-data/toggle-settings false
                    :air-temperature-data/min-bound       js/NaN
                    :air-temperature-data/max-bound       js/NaN
                    :air-temperature-data/chart-type      "line"

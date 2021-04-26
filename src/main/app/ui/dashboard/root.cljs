@@ -9,6 +9,7 @@
     [app.ui.dashboard.conductivity :as uc]
     [app.ui.dashboard.water-temperature :as uwt]
     [app.ui.dashboard.depth :as ud]
+    [app.ui.dashboard.gps :as ug]
     [app.ui.antd.components :as ant]
     [com.fulcrologic.fulcro.components :as comp :refer [defsc]]
     [com.fulcrologic.fulcro.dom :as dom :refer [div ul li h3 p]]
@@ -49,15 +50,18 @@
 
 (def ui-charts (comp/factory Charts))
 
-(defsc Dashboard [this {:dashboard/keys [charts] :as props}]
-  {:query         [{:dashboard/charts (comp/get-query Charts)}]
-   :initial-state {:dashboard/charts {}}
+(defsc Dashboard [this {:dashboard/keys [charts gps] :as props}]
+  {:query         [{:dashboard/charts (comp/get-query Charts)}
+                   {:dashboard/gps (comp/get-query ug/GPSData)}]
+   :initial-state {:dashboard/charts {}
+                   :dashboard/gps {}}
    :ident         (fn [] [:component/id :dashboard])
    :route-segment ["dashboard"]}
   (div
     (ant/row {}
       (ant/col {}
-        (ui-charts charts)))))
+        (ui-charts charts)
+        (ug/ui-gps gps)))))
 
 ;(comment
 ;  ;(def layout [{:i "a" :x 0 :y 0 :w 1 :h 2 :static true}

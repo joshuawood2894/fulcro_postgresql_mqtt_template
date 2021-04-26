@@ -41,20 +41,19 @@
 
 (def ui-humidity-chart (comp/factory HumidityChart))
 
-(defsc HumidityData [this {:humidity-data/keys [id humidity
+(defsc HumidityData [this {:humidity-data/keys [humidity
                                                 start-date end-date
                                                 toggle-settings color
                                                 min-bound max-bound
                                                 chart-type]
                            :as                 props}]
-  {:query         [:humidity-data/id {:humidity-data/humidity (comp/get-query dl/HumidityReading)}
+  {:query         [{:humidity-data/humidity (comp/get-query dl/HumidityReading)}
                    :humidity-data/start-date :humidity-data/end-date
                    :humidity-data/toggle-settings :humidity-data/color
                    :humidity-data/min-bound :humidity-data/max-bound
                    :humidity-data/chart-type]
-   :ident         :humidity-data/id
-   :initial-state {:humidity-data/id              1
-                   :humidity-data/toggle-settings false
+   :ident         (fn [] [:component/id :humidity-data])
+   :initial-state {:humidity-data/toggle-settings false
                    :humidity-data/min-bound       js/NaN
                    :humidity-data/max-bound       js/NaN
                    :humidity-data/chart-type      "line"

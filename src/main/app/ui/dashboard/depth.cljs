@@ -41,20 +41,19 @@
 
 (def ui-depth-chart (comp/factory DepthChart))
 
-(defsc DepthData [this {:depth-data/keys [id depth
+(defsc DepthData [this {:depth-data/keys [depth
                                           start-date end-date
                                           toggle-settings color
                                           min-bound max-bound
                                           chart-type]
                         :as              props}]
-  {:query         [:depth-data/id {:depth-data/depth (comp/get-query dl/DepthReading)}
+  {:query         [{:depth-data/depth (comp/get-query dl/DepthReading)}
                    :depth-data/start-date :depth-data/end-date
                    :depth-data/toggle-settings :depth-data/color
                    :depth-data/min-bound :depth-data/max-bound
                    :depth-data/chart-type]
-   :ident         :depth-data/id
-   :initial-state {:depth-data/id              1
-                   :depth-data/toggle-settings false
+   :ident         (fn [] [:component/id :depth-data])
+   :initial-state {:depth-data/toggle-settings false
                    :depth-data/min-bound       js/NaN
                    :depth-data/max-bound       js/NaN
                    :depth-data/chart-type      "line"

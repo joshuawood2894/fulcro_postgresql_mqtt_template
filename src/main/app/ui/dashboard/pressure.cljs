@@ -41,20 +41,19 @@
 
 (def ui-pressure-chart (comp/factory PressureChart))
 
-(defsc PressureData [this {:pressure-data/keys [id pressure
+(defsc PressureData [this {:pressure-data/keys [pressure
                                                 start-date end-date
                                                 toggle-settings color
                                                 min-bound max-bound
                                                 chart-type]
                            :as                 props}]
-  {:query         [:pressure-data/id {:pressure-data/pressure (comp/get-query dl/PressureReading)}
+  {:query         [{:pressure-data/pressure (comp/get-query dl/PressureReading)}
                    :pressure-data/start-date :pressure-data/end-date
                    :pressure-data/toggle-settings :pressure-data/color
                    :pressure-data/min-bound :pressure-data/max-bound
                    :pressure-data/chart-type]
-   :ident         :pressure-data/id
-   :initial-state {:pressure-data/id              1
-                   :pressure-data/toggle-settings false
+   :ident         (fn [] [:component/id :pressure-data])
+   :initial-state {:pressure-data/toggle-settings false
                    :pressure-data/min-bound       js/NaN
                    :pressure-data/max-bound       js/NaN
                    :pressure-data/chart-type      "line"

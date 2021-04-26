@@ -43,20 +43,19 @@
 
 (def ui-ph-chart (comp/factory PHChart))
 
-(defsc PHData [this {:ph-data/keys [id ph
+(defsc PHData [this {:ph-data/keys [ph
                                     start-date end-date
                                     toggle-settings color
                                     min-bound max-bound
                                     chart-type]
                      :as           props}]
-  {:query         [:ph-data/id {:ph-data/ph (comp/get-query dl/PHReading)}
+  {:query         [{:ph-data/ph (comp/get-query dl/PHReading)}
                    :ph-data/start-date :ph-data/end-date
                    :ph-data/toggle-settings :ph-data/color
                    :ph-data/min-bound :ph-data/max-bound
                    :ph-data/chart-type]
-   :ident         :ph-data/id
-   :initial-state {:ph-data/id              1
-                   :ph-data/toggle-settings false
+   :ident         (fn [] [:component/id :ph-data])
+   :initial-state {:ph-data/toggle-settings false
                    :ph-data/min-bound       js/NaN
                    :ph-data/max-bound       js/NaN
                    :ph-data/chart-type      "line"

@@ -42,20 +42,19 @@
 
 (def ui-water-temperature-chart (comp/factory WaterTemperatureChart))
 
-(defsc WaterTemperatureData [this {:water-temperature-data/keys [id water-temperature
+(defsc WaterTemperatureData [this {:water-temperature-data/keys [water-temperature
                                                                  start-date end-date
                                                                  toggle-settings color
                                                                  min-bound max-bound
                                                                  chart-type]
                                    :as                          props}]
-  {:query         [:water-temperature-data/id {:water-temperature-data/water-temperature (comp/get-query dl/WaterTemperatureReading)}
+  {:query         [{:water-temperature-data/water-temperature (comp/get-query dl/WaterTemperatureReading)}
                    :water-temperature-data/start-date :water-temperature-data/end-date
                    :water-temperature-data/toggle-settings :water-temperature-data/color
                    :water-temperature-data/min-bound :water-temperature-data/max-bound
                    :water-temperature-data/chart-type]
-   :ident         :water-temperature-data/id
-   :initial-state {:water-temperature-data/id                1
-                   :water-temperature-data/toggle-settings   false
+   :ident         (fn [] [:component/id :water-temperature-data])
+   :initial-state {:water-temperature-data/toggle-settings   false
                    :water-temperature-data/min-bound         js/NaN
                    :water-temperature-data/max-bound         js/NaN
                    :water-temperature-data/chart-type        "line"

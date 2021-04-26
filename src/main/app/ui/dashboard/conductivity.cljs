@@ -41,20 +41,19 @@
 
 (def ui-conductivity-chart (comp/factory ConductivityChart))
 
-(defsc ConductivityData [this {:conductivity-data/keys [id conductivity
+(defsc ConductivityData [this {:conductivity-data/keys [conductivity
                                                         start-date end-date
                                                         toggle-settings color
                                                         min-bound max-bound
                                                         chart-type]
                                :as                     props}]
-  {:query         [:conductivity-data/id {:conductivity-data/conductivity (comp/get-query dl/ConductivityReading)}
+  {:query         [{:conductivity-data/conductivity (comp/get-query dl/ConductivityReading)}
                    :conductivity-data/start-date :conductivity-data/end-date
                    :conductivity-data/toggle-settings :conductivity-data/color
                    :conductivity-data/min-bound :conductivity-data/max-bound
                    :conductivity-data/chart-type]
-   :ident         :conductivity-data/id
-   :initial-state {:conductivity-data/id              1
-                   :conductivity-data/toggle-settings false
+   :ident         (fn [] [:component/id :conductivity-data])
+   :initial-state {:conductivity-data/toggle-settings false
                    :conductivity-data/min-bound       js/NaN
                    :conductivity-data/max-bound       js/NaN
                    :conductivity-data/chart-type      "line"

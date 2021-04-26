@@ -41,20 +41,19 @@
 
 (def ui-air-h2s-chart (comp/factory AirH2SChart))
 
-(defsc AirH2SData [this {:air-h2s-data/keys [id air-h2s
+(defsc AirH2SData [this {:air-h2s-data/keys [air-h2s
                                              start-date end-date
                                              toggle-settings color
                                              min-bound max-bound
                                              chart-type]
                          :as                props}]
-  {:query         [:air-h2s-data/id {:air-h2s-data/air-h2s (comp/get-query dl/AirH2SReading)}
+  {:query         [{:air-h2s-data/air-h2s (comp/get-query dl/AirH2SReading)}
                    :air-h2s-data/start-date :air-h2s-data/end-date
                    :air-h2s-data/toggle-settings :air-h2s-data/color
                    :air-h2s-data/min-bound :air-h2s-data/max-bound
                    :air-h2s-data/chart-type]
-   :ident         :air-h2s-data/id
-   :initial-state {:air-h2s-data/id              1
-                   :air-h2s-data/toggle-settings false
+   :ident         (fn [] [:component/id :air-h2s-data])
+   :initial-state {:air-h2s-data/toggle-settings false
                    :air-h2s-data/min-bound       js/NaN
                    :air-h2s-data/max-bound       js/NaN
                    :air-h2s-data/chart-type      "line"
