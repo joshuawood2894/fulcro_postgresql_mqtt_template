@@ -39,10 +39,11 @@
          expected-password :accounts/passphrase
          expected-id       :accounts/id} account]
     (if (and (= email expected-email) (hs/check password expected-password))
-      (response-updating-session env
-        {:session/valid? true
-         :account/email  email
-         :account/id     expected-id})
+      (do
+        (response-updating-session env
+         {:session/valid? true
+          :account/email  email
+          :account/id     expected-id}))
       (do
         (log/error "Invalid credentials supplied for" email)
         (throw (ex-info "Invalid credentials" {:email email}))))))

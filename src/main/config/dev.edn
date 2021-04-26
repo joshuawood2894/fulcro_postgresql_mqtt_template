@@ -9,7 +9,14 @@
   }
  :mqtt-spec
  {:mqtt-url "amqps://htqaddpo:xrt7DgYey64jCHL-8RTTX5kgMHAt_H9M@orangutan.rmq.cloudamqp.com/htqaddpo"
-  :username "ghuxvsvh:ghuxvsvh"
-  :password "xdOYzLPpO08FlpnzwPw4gOI9kWDG1hxA"
-  :hostname "tcp://shark.rmq.cloudamqp.com:1883"
+  ;:username "ghuxvsvh:ghuxvsvh"
+
+  ;:username "odnga"
+  :username "cudip"
+
+  ;:password "edxltae"
+  :password "pitneta"
+  ;:password "xdOYzLPpO08FlpnzwPw4gOI9kWDG1hxA"
+  :hostname "tcp://mqtt.pcdworks.com:1883"
+  ;:hostname "tcp://shark.rmq.cloudamqp.com:1883"
   :qos 0}}
